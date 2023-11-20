@@ -1,10 +1,10 @@
 # Devlog Entry - [date]
 ## Introducing the team
-Abraham Halim - **Tools Lead**\\
-Jimmy Nguyen - **Engine Lead**\\
-Madison Li - **Design Assistant**\\
-Josh Levano - **Design Lead**\\
-Pehara Vidanagamachchi - \\
+Abraham Halim - **Tools Lead**  
+Jimmy Nguyen - **Engine Lead**  
+Madison Li - **Design Assistant**  
+Josh Levano - **Design Lead**  
+Pehara Vidanagamachchi -   
 ## Tools and materials
 Engines: Vite + Web Broswer
 Languages: TypeScript
