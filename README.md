@@ -1,4 +1,4 @@
-# Devlog Entry - [date]
+# Devlog Entry - 11/19/2023
 ## Introducing the team
 Abraham Halim - **Tools Lead**  
 Jimmy Nguyen - **Engine Lead**  
