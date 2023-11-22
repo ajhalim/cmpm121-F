@@ -35,7 +35,7 @@ const playerImage = [
 //let currentTile = 0;
 
 //defining the size of the main grid
-const numTiles = 32;
+const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
 
@@ -89,7 +89,7 @@ function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, im
 
 
 // ----- Interacting with the main tilemap -----
-
+let adjTiles = [];
 function redrawTilemap()
 {
   gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
@@ -103,17 +103,11 @@ function redrawTilemap()
 export function coordHelper(xPos: number, yPos: number)
 {
     //  tilemap[xPos][yPos].src = imageUrls[currentTile];
-
-    
-    
-
     if(pastTile != "nothing"){
         lastXPos = xyPos[0];
         lastYPos = xyPos[1];
         tilemap[lastXPos][lastYPos].src = pastTile;
     }
-
-    
 
     //console.log(tilemap[xPos][yPos].src);
 
@@ -122,11 +116,32 @@ export function coordHelper(xPos: number, yPos: number)
     tilemap[xPos][yPos].src = playerImage[0];
     
     xyPos= [xPos, yPos];
+
+    //adjTiles = adjCoords(xPos, yPos);
     
     redrawTilemap();
     time++;
     //console.log(xyPos);
     return xyPos;
+}
+
+
+
+function adjCoords(xPos: number, yPos: number){
+    let adjacentTiles = new Array;
+
+    if(xPos != 0 && yPos != 0){
+        for (let i = xPos-1; i <= xPos+1; i++) {
+            //adjacentTiles[i] = [];
+            for (let j = yPos-1; j <= yPos+1; j++) {
+                adjacentTiles.push([i,j])
+            }
+
+        }
+    }
+    //console.log(adjacentTiles);
+    return adjacentTiles;
+    
 }
 
 
@@ -140,6 +155,58 @@ gridCanvas.addEventListener("click", (e) => {
     //redrawTilemap();
 })
 
+gridCanvas.onauxclick = (e) => {
+    e.preventDefault();
+
+    const coordX = Math.trunc(e.offsetX / tileSize);
+    const coordY = Math.trunc(e.offsetY / tileSize);
+
+    let thing =[];
+
+    thing = [coordX, coordY];
+
+    /* if(pastTile != "nothing"){
+        return;
+    } */
+
+    if(coordX >= (xyPos[0]-1) && coordX <=(xyPos[0]+1)){
+        if(coordY >= (xyPos[1]-1) && coordY <=(xyPos[1]+1)){
+            if(tilemap[coordX][coordY].src == "http://localhost:5174/tile1.png"){
+                console.log("plant");
+            }
+            else{
+                console.log("harvest");
+            }
+            //console.log(tilemap[coordX][coordY].src);
+        }
+    }
+
+    /* adjTiles = adjCoords(xyPos[0], xyPos[1]);
+
+    console.log(adjTiles);
+    console.log("break");
+    console.log(thing) 
+
+    console.log(adjTiles[0]);
+    if(adjTiles.includes(thing)){
+
+        console.log("Rat")
+
+        /* if(tilemap[coordX][coordY].src == imageUrls[0]){
+
+            console.log("harvest");
+
+        } */
+
+        /* console.log(tilemap[coordX][coordY].src);
+
+        console.log("rat"); 
+
+    } */
+
+
+    //console.log("rat")
+  };
 
 
 
@@ -197,9 +264,11 @@ function generateRandomLevels() {
     }
   }
 
+
+  //uncomment this later, abe
   function updateGridData() {
     generateRandomLevels();
-    printGridData();
+    //printGridData();
   }
   
   gridCanvas.addEventListener("click", (e) => {
