@@ -20,6 +20,10 @@ const imageUrls = [
     "/tile8.png"
 ];
 
+const playerImage = [
+    "./player.png"
+]
+
 //let currentTile = 0;
 
 //defining the size of the main grid
@@ -30,6 +34,10 @@ const tileSize = gridCanvas.width / numTiles;
 //defining the size of the select grid
 const numSelectables = imageUrls.length;
 const selectHeight = selectCanvas.height / numSelectables;
+
+let lastXPos: number;
+let lastYPos: number;
+let pastTile: string = "nothing";
 
 let xyPos:number [];
 let time:number = 0;
@@ -86,7 +94,24 @@ function redrawTilemap()
 
 export function coordHelper(xPos: number, yPos: number)
 {
-    tilemap[xPos][yPos].src = imageUrls[currentTile];
+    //  tilemap[xPos][yPos].src = imageUrls[currentTile];
+
+    
+    
+
+    if(pastTile != "nothing"){
+        lastXPos = xyPos[0];
+        lastYPos = xyPos[1];
+        tilemap[lastXPos][lastYPos].src = pastTile;
+    }
+
+    
+
+    //console.log(tilemap[xPos][yPos].src);
+
+    pastTile = tilemap[xPos][yPos].src;
+
+    tilemap[xPos][yPos].src = playerImage[0];
     
     xyPos= [xPos, yPos];
     
