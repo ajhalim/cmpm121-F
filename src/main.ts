@@ -8,7 +8,6 @@ const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
 const selectCanvas = document.getElementById("selectCanvas") as HTMLCanvasElement;
 const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-
 //defining the textures to use
 const imageUrls = [
     "/tile1.png",
@@ -32,7 +31,8 @@ const tileSize = gridCanvas.width / numTiles;
 const numSelectables = imageUrls.length;
 const selectHeight = selectCanvas.height / numSelectables;
 
-
+let xyPos:number [];
+let time:number = 0;
 
 //creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -84,14 +84,15 @@ function redrawTilemap()
     }
 }
 
-function coordHelper(xPos: number, yPos: number)
+export function coordHelper(xPos: number, yPos: number)
 {
     tilemap[xPos][yPos].src = imageUrls[currentTile];
     
-    let xyPos:number [] = [xPos, yPos];
-    //xyPos[xPos][yPos];
+    xyPos= [xPos, yPos];
+    
     redrawTilemap();
-    console.log(xyPos);
+    time++;
+    //console.log(xyPos);
     return xyPos;
 }
 
