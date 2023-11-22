@@ -1,5 +1,5 @@
 import "./style.css";
-
+import { Plant } from "./plants";
 
 //setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -12,8 +12,7 @@ const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 interface CellData {
     sunLevel: number;
     waterLevel: number;
-    plantType?: string; // Plant type (e.g., "species1", "species2", "species3")
-    growthLevel?: string; // Growth level (e.g., "level1", "level2", "level3")
+    plant?: Plant;
 }
 
 //defining the textures to use
@@ -32,12 +31,9 @@ const playerImage = [
     "./player.png"
 ]
 
-//let currentTile = 0;
-
 //defining the size of the main grid
 const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
-
 
 //defining the size of the select grid
 const numSelectables = imageUrls.length;
@@ -47,8 +43,17 @@ let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
 
-let xyPos:number [];
-let time:number = 0;
+let xyPos: number[];
+let time: number = 0;
+
+// track the selected tile
+//let currentTile = 0;
+
+//let adjTiles = [];
+
+// can change the names of the types later
+const plantTypes = ["species1", "species2", "species3"];
+let harvestTotal = 0;
 
 //creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -66,18 +71,13 @@ for(let i = 0; i < numTiles; i++) {
 const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
 
 
-function create(elementNone: any) {
-    return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
-}
-
-
-//track the selected tile
-let currentTile = 0;
+// function create(elementNone: any) {
+//     return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
+// }
 
 //draw the initial canvases
 redrawTilemap();
 drawSelectCanvas();
-
 
 //Function that draws a texture to a specific canvas ctx
 function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, image: HTMLImageElement, width: number, height: number, cellSize: number) {
@@ -87,11 +87,8 @@ function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, im
     ctx.drawImage(image, row * cellSize, col * cellSize, width, height)
 }
 
-
 // ----- Interacting with the main tilemap -----
-let adjTiles = [];
-function redrawTilemap()
-{
+function redrawTilemap() {
   gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
     for (let i = 0; i < numTiles; i++) {
         for (let j = 0; j < numTiles; j++) {
@@ -100,9 +97,10 @@ function redrawTilemap()
     }
 }
 
-export function coordHelper(xPos: number, yPos: number)
-{
-    //  tilemap[xPos][yPos].src = imageUrls[currentTile];
+export function coordHelper(xPos: number, yPos: number) {
+    /* if-statement makes sure to reset the tile that the player moves from to the img
+    it was before the player moved onto it.*/
+    // tilemap[xPos][yPos].src = imageUrls[currentTile];
     if(pastTile != "nothing"){
         lastXPos = xyPos[0];
         lastYPos = xyPos[1];
@@ -112,10 +110,8 @@ export function coordHelper(xPos: number, yPos: number)
     //console.log(tilemap[xPos][yPos].src);
 
     pastTile = tilemap[xPos][yPos].src;
-
     tilemap[xPos][yPos].src = playerImage[0];
-    
-    xyPos= [xPos, yPos];
+    xyPos = [xPos, yPos];
 
     //adjTiles = adjCoords(xPos, yPos);
     
@@ -125,35 +121,32 @@ export function coordHelper(xPos: number, yPos: number)
     return xyPos;
 }
 
+// function adjCoords(xPos: number, yPos: number) {
+//     let adjacentTiles = new Array;
 
+//     if (xPos != 0 && yPos != 0) {
+//         for (let i = xPos-1; i <= xPos+1; i++) {
+//             //adjacentTiles[i] = [];
+//             for (let j = yPos-1; j <= yPos+1; j++) {
+//                 adjacentTiles.push([i,j])
+//             }
 
-function adjCoords(xPos: number, yPos: number){
-    let adjacentTiles = new Array;
-
-    if(xPos != 0 && yPos != 0){
-        for (let i = xPos-1; i <= xPos+1; i++) {
-            //adjacentTiles[i] = [];
-            for (let j = yPos-1; j <= yPos+1; j++) {
-                adjacentTiles.push([i,j])
-            }
-
-        }
-    }
-    //console.log(adjacentTiles);
-    return adjacentTiles;
+//         }
+//     }
+//     //console.log(adjacentTiles);
+//     return adjacentTiles;
     
-}
+// }
 
+// gridCanvas.addEventListener("click", (e) => {
+//     const coordX = Math.trunc(e.offsetX / tileSize);
+//     const coordY = Math.trunc(e.offsetY / tileSize);
 
-gridCanvas.addEventListener("click", (e) => {
-    const coordX = Math.trunc(e.offsetX / tileSize);
-    const coordY = Math.trunc(e.offsetY / tileSize);
+//     coordHelper(coordX, coordY);
 
-    coordHelper(coordX, coordY);
-
-    //tilemap[coordX][coordY].src = imageUrls[currentTile];
-    //redrawTilemap();
-})
+//     //tilemap[coordX][coordY].src = imageUrls[currentTile];
+//     //redrawTilemap();
+// })
 
 gridCanvas.onauxclick = (e) => {
     e.preventDefault();
@@ -161,23 +154,34 @@ gridCanvas.onauxclick = (e) => {
     const coordX = Math.trunc(e.offsetX / tileSize);
     const coordY = Math.trunc(e.offsetY / tileSize);
 
-    let thing =[];
-
-    thing = [coordX, coordY];
+    // let thing =[];
+    // thing = [coordX, coordY];
 
     /* if(pastTile != "nothing"){
         return;
     } */
 
-    if(coordX >= (xyPos[0]-1) && coordX <=(xyPos[0]+1)){
-        if(coordY >= (xyPos[1]-1) && coordY <=(xyPos[1]+1)){
-            if(tilemap[coordX][coordY].src == "http://localhost:5174/tile1.png"){
-                console.log("plant");
+    /* Can only plant on squares adjacent to the player that haven't already been planted. */
+    if (coordX >= (xyPos[0]-1) && coordX <=(xyPos[0]+1)) {
+        if (coordY >= (xyPos[1]-1) && coordY <=(xyPos[1]+1)) {
+            if (tilemap[coordX][coordY].src.includes(imageUrls[0])) {
+                cellData[coordX][coordY].plant = new Plant(plantTypes[Math.floor(Math.random() * plantTypes.length)], 1, 0);
+                const plantType = plantTypes.indexOf(cellData[coordX][coordY].plant!.type);
+                tilemap[coordX][coordY].src = imageUrls[plantType+1];
+                console.log("planted a " + cellData[coordX][coordY].plant!.type);
             }
-            else{
-                console.log("harvest");
+            else {
+                if (!(tilemap[coordX][coordY].src.includes("player")) && cellData[coordX][coordY].plant!.growth > 1) {
+                    console.log("harvested a " + cellData[coordX][coordY].plant!.type + " at level: " + cellData[coordX][coordY].plant!.growth);
+                    tilemap[coordX][coordY].src = imageUrls[0];
+                    cellData[coordX][coordY].plant = undefined;
+                    harvestTotal++;
+                    if (harvestTotal==10) {
+                        console.log("You won!");
+                    }
+                }
+                
             }
-            //console.log(tilemap[coordX][coordY].src);
         }
     }
 
@@ -206,28 +210,8 @@ gridCanvas.onauxclick = (e) => {
 
 
     //console.log("rat")
-  };
+};
 
-
-
-// ----- Interacting with the selectable tilemap -----
-
-// Loop through the selectable tiles and draw textures in each cell
-function drawSelectCanvas()
-{
-    for (let i = 0; i < numSelectables; i++) {
-        const selectableImage = new Image();
-        selectableImage.src = imageUrls[i];
-        drawTexture(0, i, selectCtx, selectableImage, selectCanvas.width, selectHeight, 64);
-    }
-}
-
-selectCanvas.addEventListener("click", (e) => {
-    //const coordX = Math.trunc(e.offsetX / tileSize);
-    const coordY = Math.trunc(e.offsetY / selectHeight);
-    currentTile = coordY;
-    console.log(coordY);
-})
 
 let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
@@ -239,47 +223,69 @@ for (let i = 0; i < numTiles; i++) {
 }
 
 function generateRandomLevels() {
-    const plantTypes = ["species1", "species2", "species3"];
-    const growthLevels = ["level1", "level2", "level3"];
-
     for (let i = 0; i < numTiles; i++) {
       for (let j = 0; j < numTiles; j++) {
+        const currCell = cellData[i][j];
         // Generate random levels (you can adjust the range based on your requirements)
-        cellData[i][j].sunLevel = Math.floor(Math.random() * 100);
-        cellData[i][j].waterLevel += Math.floor(Math.random() * 10);
-        cellData[i][j].plantType = plantTypes[Math.floor(Math.random() * plantTypes.length)];
-        cellData[i][j].growthLevel = growthLevels[Math.floor(Math.random() * growthLevels.length)];
+        currCell.sunLevel = Math.floor(Math.random() * 100);
+        currCell.waterLevel += Math.floor(Math.random() * 100);
+        if (currCell.plant != undefined) {
+            currCell.plant?.advanceTime(currCell.sunLevel, currCell.waterLevel);
+        }
       }
     }
   }
 
-  function printGridData() {
+function printGridData() {
+    console.log("Time passed: " + time);
     console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
     for (let i = 0; i < numTiles; i++) {
-      let rowString = "";
-      for (let j = 0; j < numTiles; j++) {
-        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}, Plant Type: ${cellData[i][j].plantType}, Growth Level: ${cellData[i][j].growthLevel} | `;
-      }
-      console.log(rowString);
+        let rowString = "";
+        for (let j = 0; j < numTiles; j++) {
+        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`
+        if (cellData[i][j].plant != undefined) {
+            rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
+        }
+        rowString += "\n";
     }
-  }
+        console.log(rowString);
+    }
+}
 
 
-  //uncomment this later, abe
-  function updateGridData() {
+// uncomment this later, abe
+function updateGridData() {
     generateRandomLevels();
-    //printGridData();
-  }
+    printGridData();
+}
   
-  gridCanvas.addEventListener("click", (e) => {
+gridCanvas.addEventListener("click", (e) => {
     const coordX = Math.trunc(e.offsetX / tileSize);
     const coordY = Math.trunc(e.offsetY / tileSize);
-  
+
     coordHelper(coordX, coordY);
-  
+
     // Update grid data after the player moves
     updateGridData();
-  });
+});
   
-  // Call updateGridData initially to set initial levels
-  updateGridData();
+// Call updateGridData initially to set initial levels
+updateGridData();
+
+/* Select Canvas Functions (currently unused) */
+  // ----- Interacting with the selectable tilemap -----
+
+  // Loop through the selectable tiles and draw textures in each cell
+function drawSelectCanvas() {
+    for (let i = 0; i < numSelectables; i++) {
+        const selectableImage = new Image();
+        selectableImage.src = imageUrls[i];
+        drawTexture(0, i, selectCtx, selectableImage, selectCanvas.width, selectHeight, 64);
+    }
+}
+
+// selectCanvas.addEventListener("click", (e) => {
+//     const coordY = Math.trunc(e.offsetY / selectHeight);
+//     currentTile = coordY;
+//     console.log(coordY);
+// })
