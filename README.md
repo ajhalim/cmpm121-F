@@ -26,3 +26,24 @@ The stretch goals and the changing requirements seem to be the hardest/riskiest 
 
 **What are you hoping to learn by approaching the project with the tools and materials you selected above?**  
 We're hoping to learn refactoring, especially with the changing requirements, and to -- as a result -- learn more SOLID principles of software design.  
+
+# Devlog Entry 11/22/2023
+## How we satisfied the software requirements
+* [F0.a] You control a character moving on a 2D grid.
+    * The character, represented by a tile image, moves to a grid cell based on mouse click. The player can move to any grid cell without limit, but can still only access nearby tiles for sowing/reaping plants.
+* [F0.b] You advance time in the turn-based simulation manually.
+    * Every time the player moves, a.k.a. when the player clicks on the grid with their mouse, time moves by one step. Each time step will re-randomize the sun levels, add a random amount of water to each grid cell, and call the advanceTime() function on a plant if one exists for that grid cell.  
+* [F0.c] You can reap (gather) or sow (plant) plants on the grid when your character is near them.
+    * Grid cells directly adjacent to the player (8 total) can be sowed with plants. Currently that means set to a different tile image based on the type of plant sowed. This can only be done provided that the tile in that spot is the default grass tile
+    * Grid cells can be reaped from if the adjacent cell has a plant that has a growth level of 2 or more; the process resets the tile back to default (green grass tile, no plant).
+* [F0.d] Grid cells have sun and water levels. The incoming sun and water for each cell is somehow randomly generated each turn. Sun energy cannot be stored in a cell (it is used immediately or lost) while water moisture can be slowly accumulated over several turns.
+    * Using an array of CellData objects, sun and water levels are stored in each of the grid cells. Sun is randomly generated each time step, but water is aggregated over time.
+* [F0.e] Each plant on the grid has a type (e.g. one of 3 species) and a growth level (e.g. “level 1”, “level 2”, “level 3”).
+    * If a player plants a plant in a grid cell, then the plant has a type "species1-3" randomly generated. It starts at growth = 1.
+* [F0.f] Simple spatial rules govern plant growth based on sun, water, and nearby plants (growth is unlocked by satisfying conditions).
+    * Plants increase their growth level when the amount of sun is greater than 50 and enough water has been aggregated (the requirement is 100 at first, and increments by 100 per each growth level achieved).
+* [F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
+    * If 10 plants have been harvested, a victory message is printed to console.
+
+## Reflection
+So far, Vite and TypeScript has been sufficient for implementing the F0 requirements, though we may want to change the right-click action to a different one, since currently it brings up an unneeded menu (even if the game does otherwise work as intended). As for team roles, since a few members were busy this week, it feels a bit as if roles had temporarily been swapped to accomodate, but it's likely that those roles will revert once all teammates are able to contribute again. This feels especially the case for the Design teammates, since the goal was to implement a barebones F0, so it felt that there was less designing to do. However, with our unique goals -- i.e. a plant crafting system -- still unfinished, that could be a place for design to think more creatively. 
