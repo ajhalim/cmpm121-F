@@ -1,5 +1,11 @@
 import "./style.css";
 
+interface CellData {
+    sunLevel: number;
+    waterLevel: number;
+}
+
+
 
 //setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -153,3 +159,51 @@ selectCanvas.addEventListener("click", (e) => {
     currentTile = coordY;
     console.log(coordY);
 })
+
+let cellData: CellData[][] = new Array(numTiles);
+for (let i = 0; i < numTiles; i++) {
+    let row = new Array(numTiles);
+    for (let j = 0; j < numTiles; j++) {
+        row[j] = { sunLevel: 0, waterLevel: 0};
+    }
+    cellData[i] = row;
+}
+
+function generateRandomLevels() {
+    for (let i = 0; i < numTiles; i++) {
+      for (let j = 0; j < numTiles; j++) {
+        // Generate random levels (you can adjust the range based on your requirements)
+        cellData[i][j].sunLevel = Math.floor(Math.random() * 100);
+        cellData[i][j].waterLevel += Math.floor(Math.random() * 10);
+      }
+    }
+  }
+
+  function printGridData() {
+    console.log("Grid Cells - Sun and Water Levels:");
+    for (let i = 0; i < numTiles; i++) {
+      let rowString = "";
+      for (let j = 0; j < numTiles; j++) {
+        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel} | `;
+      }
+      console.log(rowString);
+    }
+  }
+
+  function updateGridData() {
+    generateRandomLevels();
+    printGridData();
+  }
+  
+  gridCanvas.addEventListener("click", (e) => {
+    const coordX = Math.trunc(e.offsetX / tileSize);
+    const coordY = Math.trunc(e.offsetY / tileSize);
+  
+    coordHelper(coordX, coordY);
+  
+    // Update grid data after the player moves
+    updateGridData();
+  });
+  
+  // Call updateGridData initially to set initial levels
+  updateGridData();
