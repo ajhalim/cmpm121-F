@@ -46,8 +46,8 @@ for(let i = 0; i < numTiles; i++) {
     tilemap[i] = row;
 }
 
-const svg: HTMLElement = create("svg");
-const svgContainer: HTMLElement | null = document.getElementById("svgContainer");
+/* const svg: HTMLElement = create("svg");
+const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
 
 
 function create(elementNone: any) {
@@ -84,14 +84,29 @@ function redrawTilemap()
     }
 }
 
+function coordHelper(xPos: number, yPos: number)
+{
+    tilemap[xPos][yPos].src = imageUrls[currentTile];
+    
+    let xyPos:number [] = [xPos, yPos];
+    //xyPos[xPos][yPos];
+    redrawTilemap();
+    console.log(xyPos);
+    return xyPos;
+}
+
 
 gridCanvas.addEventListener("click", (e) => {
     const coordX = Math.trunc(e.offsetX / tileSize);
     const coordY = Math.trunc(e.offsetY / tileSize);
 
-    tilemap[coordX][coordY].src = imageUrls[currentTile];
-    redrawTilemap();
+    coordHelper(coordX, coordY);
+
+    //tilemap[coordX][coordY].src = imageUrls[currentTile];
+    //redrawTilemap();
 })
+
+
 
 
 // ----- Interacting with the selectable tilemap -----
