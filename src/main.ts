@@ -12,6 +12,8 @@ const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 interface CellData {
     sunLevel: number;
     waterLevel: number;
+    plantType?: string; // Plant type (e.g., "species1", "species2", "species3")
+    growthLevel?: string; // Growth level (e.g., "level1", "level2", "level3")
 }
 
 //defining the textures to use
@@ -170,21 +172,26 @@ for (let i = 0; i < numTiles; i++) {
 }
 
 function generateRandomLevels() {
+    const plantTypes = ["species1", "species2", "species3"];
+    const growthLevels = ["level1", "level2", "level3"];
+
     for (let i = 0; i < numTiles; i++) {
       for (let j = 0; j < numTiles; j++) {
         // Generate random levels (you can adjust the range based on your requirements)
         cellData[i][j].sunLevel = Math.floor(Math.random() * 100);
         cellData[i][j].waterLevel += Math.floor(Math.random() * 10);
+        cellData[i][j].plantType = plantTypes[Math.floor(Math.random() * plantTypes.length)];
+        cellData[i][j].growthLevel = growthLevels[Math.floor(Math.random() * growthLevels.length)];
       }
     }
   }
 
   function printGridData() {
-    console.log("Grid Cells - Sun and Water Levels:");
+    console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
     for (let i = 0; i < numTiles; i++) {
       let rowString = "";
       for (let j = 0; j < numTiles; j++) {
-        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel} | `;
+        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}, Plant Type: ${cellData[i][j].plantType}, Growth Level: ${cellData[i][j].growthLevel} | `;
       }
       console.log(rowString);
     }
