@@ -9,7 +9,7 @@ const selectCanvas = document.getElementById("selectCanvas") as HTMLCanvasElemen
 const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 // Data structure storing the data of sun and water level
-interface CellData {
+export interface CellData {
     sunLevel: number;
     waterLevel: number;
     plant?: Plant;
@@ -32,7 +32,7 @@ const playerImage = [
 ]
 
 //defining the size of the main grid
-const numTiles = 10;
+export const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
 //defining the size of the select grid
@@ -43,8 +43,8 @@ let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
 
-let xyPos: number[];
-let time: number = 0;
+export let xyPos: number[];
+export let time: number = 0;
 
 // track the selected tile
 //let currentTile = 0;
@@ -213,7 +213,7 @@ gridCanvas.onauxclick = (e) => {
 };
 
 
-let cellData: CellData[][] = new Array(numTiles);
+export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
     let row = new Array(numTiles);
     for (let j = 0; j < numTiles; j++) {
