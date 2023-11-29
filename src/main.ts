@@ -1,5 +1,6 @@
 import "./style.css";
 import { Plant } from "./plants";
+import { saveGrid } from "./saveFunction";
 
 //setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -66,6 +67,7 @@ for(let i = 0; i < numTiles; i++) {
     }
     tilemap[i] = row;
 }
+
 
 /* const svg: HTMLElement = create("svg");
 const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
@@ -212,6 +214,14 @@ gridCanvas.onauxclick = (e) => {
     //console.log("rat")
 };
 
+//ABE'S NEW BULLSHIT
+const textBox = document.createElement("input");
+textBox.type = "text";
+textBox.placeholder = "Enter your name";
+textBox.value = "no data";
+textBox.id = "nameInput";
+document.getElementsByTagName('body')[0].appendChild(textBox);
+
 
 export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
@@ -252,11 +262,17 @@ function printGridData() {
     }
 }
 
+let text: string;
 
+text = "";
+
+let autosave:string = "";
 // uncomment this later, abe
 function updateGridData() {
     generateRandomLevels();
     printGridData();
+    autosave = saveGrid();
+    textBox.value = autosave;
 }
   
 gridCanvas.addEventListener("click", (e) => {
@@ -289,3 +305,39 @@ function drawSelectCanvas() {
 //     currentTile = coordY;
 //     console.log(coordY);
 // })
+
+
+
+//export let fs = require('fs');
+
+///fs.writeFileSync('./foo.txt', text);
+
+/* function saveGrid() {
+    text = "";
+    text += "Time passed: " + String(time) + " \n";
+    text += "Player is at: " + String(xyPos) + " \n";
+    text += "Grid Cells - Sun, Water, Plant Type, and Growth Level: ";
+   
+    for (let i = 0; i < numTiles; i++) {
+        let rowString = "";
+        for (let j = 0; j < numTiles; j++) {
+        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`
+        if (cellData[i][j].plant != undefined) {
+            rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
+        }
+        text += "\n";
+    }
+    text +=rowString;
+        //console.log(rowString);
+        /* fs.writeFile('data.txt', text, 'utf8', (err) => {
+            if (err) {
+              console.error('Error writing to file:', err);
+            } else {
+              console.log(`Successfully wrote to ${'data.txt'}`);
+            }
+        
+    }); 
+}   
+return text;
+} */
+
