@@ -45,7 +45,7 @@ let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
 
-export let xyPos: number[];
+export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
 export let time: number = 0;
 
 // track the selected tile
@@ -164,6 +164,7 @@ export function coordHelper(xPos: number, yPos: number) {
 //     //tilemap[coordX][coordY].src = imageUrls[currentTile];
 //     //redrawTilemap();
 // })
+
 
 gridCanvas.onauxclick = (e) => {
   e.preventDefault();
@@ -298,7 +299,7 @@ function updateGridData() {
   autosave = saveGrid();
   textBox.value = autosave;
 }
-
+/*
 gridCanvas.addEventListener("click", (e) => {
   const coordX = Math.trunc(e.offsetX / tileSize);
   const coordY = Math.trunc(e.offsetY / tileSize);
@@ -308,7 +309,7 @@ gridCanvas.addEventListener("click", (e) => {
   // Update grid data after the player moves
   updateGridData();
 });
-
+*/
 // Call updateGridData initially to set initial levels
 updateGridData();
 
@@ -371,101 +372,115 @@ return text;
 const undoStack: Memento[] = [];
 const redoStack: Memento[] = [];
 
-// Function to save the current state
-function saveState() {
-  const currentState = new Memento(
-    tilemap.map((row) => row.map((cell) => cell)),
-    cellData.map((row) => row.map((cell) => ({ ...cell }))),
-    xyPos.slice(),
-    time
-  );
-
-  undoStack.push(currentState);
-  redoStack.length = 0; // Clear redo stack after a new state is saved
-}
-
-function undo() {
-  if (undoStack.length > 0) {
-    const prevState = undoStack.pop();
-
-    if (!prevState) {
-      console.error("Undo stack is empty");
-      return;
-    }
-
-    console.log("Undoing last action...");
-
-    redoStack.push(
-      new Memento(
-        tilemap.map((row) => row.map((cell) => cell)), // No change here
-        cellData.map((row) => row.map((cell) => ({ ...cell }))),
-        xyPos.slice(),
-        time
-      )
-    );
-
-    // Restore the previous state
-    tilemap = prevState.tilemap.map((row) => row.map((cell) => cell)); // No change here
-    cellData = prevState.cellData.map((row) =>
-      row.map((cell) => ({ ...cell }))
-    );
-    xyPos = prevState.xyPos.slice();
-    time = prevState.time;
-
-    // Redraw the tilemap
-    redrawTilemap();
-
-    console.log("Undone. Current state:");
-    printGridData();
-  }
-}
-
-function redo() {
-  if (redoStack.length > 0) {
-    const nextState = redoStack.pop();
-
-    if (!nextState) {
-      console.error("Redo stack is empty");
-      return;
-    }
-
-    console.log("Redoing last undone action...");
-
-    undoStack.push(
-      new Memento(
-        tilemap.map((row) => row.map((cell) => cell)), // No change here
-        cellData.map((row) => row.map((cell) => ({ ...cell }))),
-        xyPos.slice(),
-        time
-      )
-    );
-
-    // Restore the next state
-    tilemap = nextState.tilemap.map((row) => row.map((cell) => cell)); // No change here
-    cellData = nextState.cellData.map((row) =>
-      row.map((cell) => ({ ...cell }))
-    );
-    xyPos = nextState.xyPos.slice();
-    time = nextState.time;
-
-    // Redraw the tilemap
-    redrawTilemap();
-
-    console.log("Redone. Current state:");
-    printGridData();
-  }
-}
-
-// Set up event listeners for undo and redo buttons
 const undoButton = document.getElementById("undoButton") as HTMLButtonElement;
 const redoButton = document.getElementById("redoButton") as HTMLButtonElement;
 
-undoButton.addEventListener("click", undo);
-redoButton.addEventListener("click", redo);
+undoButton.addEventListener("click", () => {
+  undo();
+});
+
+redoButton.addEventListener("click", () => {
+  redo();
+});
+
+// Function to undo the last action
+function undo() {
+  const prevState = undoStack.pop();
+
+  if (!prevState) {
+    console.error("Undo stack is empty");
+    return;
+  }
+
+  console.log("Undoing last action...");
+
+  // Save the current state before undoing
+  saveStateToRedoStack();
+
+  // Restore the previous state
+  restoreState(prevState);
+
+  console.log("Undone. Current state:");
+  printGridData();
+}
+
+// Function to redo the last undone action
+function redo() {
+  const nextState = redoStack.pop();
+
+  if (!nextState) {
+    console.error("Redo stack is empty");
+    return;
+  }
+
+  console.log("Redoing last undone action...");
+
+  // Save the current state before redoing
+  saveStateToUndoStack();
+
+  // Restore the next state
+  restoreState(nextState);
+
+  console.log("Redone. Current state:");
+  printGridData();
+}
+
+// Helper function to save the current state to the undo stack
+function saveStateToUndoStack() {
+  undoStack.push(new Memento(
+    tilemap.map((row) =>
+      row.map((cell) => {
+        const img = new Image();
+        img.src = cell.src;
+        return img;
+      })
+    ),
+    cellData.map((row) => row.map((cell) => ({ ...cell }))),
+    xyPos.slice(),
+    time
+  ));
+}
+
+// Helper function to save the current state to the redo stack
+function saveStateToRedoStack() {
+  redoStack.push(new Memento(
+    tilemap.map((row) =>
+      row.map((cell) => {
+        const img = new Image();
+        img.src = cell.src;
+        return img;
+      })
+    ),
+    cellData.map((row) => row.map((cell) => ({ ...cell }))),
+    xyPos.slice(),
+    time
+  ));
+}
+
+// Helper function to restore a state
+function restoreState(state: Memento) {
+  tilemap = state.tilemap.map((row) =>
+    row.map((cell) => {
+      const img = new Image();
+      img.src = cell.src;
+      return img;
+    })
+  );
+  cellData = state.cellData.map((row) =>
+    row.map((cell) => ({ ...cell }))
+  );
+  xyPos = state.xyPos.slice();
+  time = state.time;
+
+  // Redraw the tilemap
+  redrawTilemap();
+}
+
+// ... (Your existing code)
 
 // Modify your existing click event listener to save the state before updating the grid data
 gridCanvas.addEventListener("click", (e) => {
-  saveState(); // Save state before updating the grid data
+  saveStateToUndoStack(); // Save state before updating the grid data
 
   const coordX = Math.trunc(e.offsetX / tileSize);
   const coordY = Math.trunc(e.offsetY / tileSize);
