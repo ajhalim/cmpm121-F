@@ -140,49 +140,11 @@ export function coordHelper(xPos: number, yPos: number) {
   return xyPos;
 }
 
-// DELETE FUNCTION? -----------------------------------
-// function adjCoords(xPos: number, yPos: number) {
-//     let adjacentTiles = new Array;
-
-//     if (xPos != 0 && yPos != 0) {
-//         for (let i = xPos-1; i <= xPos+1; i++) {
-//             //adjacentTiles[i] = [];
-//             for (let j = yPos-1; j <= yPos+1; j++) {
-//                 adjacentTiles.push([i,j])
-//             }
-
-//         }
-//     }
-//     //console.log(adjacentTiles);
-//     return adjacentTiles;
-
-// }
-
-// gridCanvas.addEventListener("click", (e) => {
-//     const coordX = Math.trunc(e.offsetX / tileSize);
-//     const coordY = Math.trunc(e.offsetY / tileSize);
-
-//     coordHelper(coordX, coordY);
-
-//     //tilemap[coordX][coordY].src = imageUrls[currentTile];
-//     //redrawTilemap();
-// })
-// ------------------------------------------
-
 gridCanvas.onauxclick = (e) => {
   e.preventDefault();
 
   const coordX = Math.trunc(e.offsetX / tileSize);
   const coordY = Math.trunc(e.offsetY / tileSize);
-
-  // DELETE? -------------
-  // let thing =[];
-  // thing = [coordX, coordY];
-
-  /* if(pastTile != "nothing"){
-        return;
-    } */
-  // ------------------------
 
   /* Can only plant on squares adjacent to the player that haven't already been planted. */
   if (coordX >= xyPos[0] - 1 && coordX <= xyPos[0] + 1) {
@@ -219,42 +181,15 @@ gridCanvas.onauxclick = (e) => {
       }
     }
   }
-
-  // DELETE SECTION? ------------------------------
-  /* adjTiles = adjCoords(xyPos[0], xyPos[1]);
-
-    console.log(adjTiles);
-    console.log("break");
-    console.log(thing) 
-
-    console.log(adjTiles[0]);
-    if(adjTiles.includes(thing)){
-
-        console.log("Rat")
-
-        /* if(tilemap[coordX][coordY].src == imageUrls[0]){
-
-            console.log("harvest");
-
-        } */
-
-  /* console.log(tilemap[coordX][coordY].src);
-
-        console.log("rat"); 
-
-    } */
-
-  //console.log("rat")
-  // -------------------------------
 };
 
 //ABE'S NEW STUFF
-// const textBox = document.createElement("input");
-// textBox.type = "text";
-// textBox.placeholder = "Enter your name";
-// textBox.value = "no data";
-// textBox.id = "nameInput";
-// document.getElementsByTagName("body")[0].appendChild(textBox);
+const textBox = document.createElement("input");
+textBox.type = "text";
+textBox.placeholder = "Enter your name";
+textBox.value = "left click to move, right click to sow/reep";
+textBox.id = "nameInput";
+document.getElementsByTagName("body")[0].appendChild(textBox);
 
 export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
