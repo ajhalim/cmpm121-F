@@ -54,9 +54,11 @@ So far, Vite and TypeScript has been sufficient for implementing the F0 requirem
 ## Available choices: How can a first-time player quickly identify what they are trying to do and how to achieve it?
 * The player can click and move around the space, right clicking makes a different sprite come up. and also we have a little set of instructions in a text box on the page stating that m1 moves the player and m2 allows for reap and sowing.
 * Have another text box to tell the player the goal of growing plants via right clicking and waiting and right clicking them again when ready
+* WIP trying to make either a notifaction or textbox appear with game instructions of what the player can do
 
 ## Impacts of choices:
-* 
+* When clicking around the player can be seen to be moving throughout the canvas. Also when right clicking the tiles change(currently with a placeholder no plant asset yet just tile colors). The player can also right click a plant tile to reap it and remove said plant tile, this reverts that tile's status to no plant and no plantGrowth and also the canvas back to the default green.
+* WIP to make some notifcation pop up when a plant reaches full growth saying plant type x in coord [i,j].
 
 ## How we satisfied the software requirements
 * [F0] our requirements for f0 stay largely the same. The plant type has been changed to a string literal, but otherwise implementation hasn't changed much. We still satisfy f0.a by clicking to move the player, f0.b by automatically incrementing time each step, f0.c by using right click on tiles next to the player to plant and harvest "plants", and f0.d by storing weather information inside a CellData object (with levels randomly re-generated each time step). F0.e is still satisfied through a string label, but as mentioned before that label has been defined as a "PlantType" which ensures the label will be only one of the three types defined, species1, species2, and species3. F0.f is satisfied by the plant interacting with the sun/water levels in the cell data, and f0.g is satisfied by the victory message printed after harvesting 10 plants
