@@ -301,7 +301,7 @@ export let saveNum: number = 0;
 function updateGridData() {
   generateRandomLevels();
   printGridData();
-  autosave = saveGrid();
+  //autosave = saveGrid();
   //textBox.value = autosave;
   saveNum++;
 }
@@ -344,42 +344,6 @@ function drawSelectCanvas() {
   }
 }
 
-// selectCanvas.addEventListener("click", (e) => {
-//     const coordY = Math.trunc(e.offsetY / selectHeight);
-//     currentTile = coordY;
-//     console.log(coordY);
-// })
-
-//export let fs = require('fs');
-///fs.writeFileSync('./foo.txt', text);
-
-/* function saveGrid() {
-    text = "";
-    text += "Time passed: " + String(time) + " \n";
-    text += "Player is at: " + String(xyPos) + " \n";
-    text += "Grid Cells - Sun, Water, Plant Type, and Growth Level: ";
-   
-    for (let i = 0; i < numTiles; i++) {
-        let rowString = "";
-        for (let j = 0; j < numTiles; j++) {
-        rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`
-        if (cellData[i][j].plant != undefined) {
-            rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
-        }
-        text += "\n";
-        text +=rowString;
-        //console.log(rowString);
-        /* fs.writeFile('data.txt', text, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing to file:', err);
-            } else {
-              console.log(`Successfully wrote to ${'data.txt'}`);
-            }
-        }); 
-    }   
-return text;
-} */
-
 const undoStack: Memento[] = [];
 const redoStack: Memento[] = [];
 
@@ -389,13 +353,16 @@ const saveButton = document.getElementById("saveButton") as HTMLButtonElement;
 
 undoButton.addEventListener("click", () => {
   undo();
+  ///console.log("rat")
 });
 
 redoButton.addEventListener("click", () => {
   redo();
+  //console.log("rat")
 });
 
 saveButton.addEventListener("click", () => {
+  saveGrid()
 });
 
 // Function to undo the last action
