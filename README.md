@@ -44,7 +44,10 @@ We're hoping to learn refactoring, especially with the changing requirements, an
     * Plants increase their growth level when the amount of sun is greater than 50 and enough water has been aggregated (the requirement is 100 at first, and increments by 100 per each growth level achieved).
 * [F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
     * If 10 plants have been harvested, a victory message is printed to console.
- 
+
+
+ ## Reflection
+So far, Vite and TypeScript has been sufficient for implementing the F0 requirements, though we may want to change the right-click action to a different one, since currently it brings up an unneeded menu (even if the game does otherwise work as intended). As for team roles, since a few members were busy this week, it feels a bit as if roles had temporarily been swapped to accomodate, but it's likely that those roles will revert once all teammates are able to contribute again. This feels especially the case for the Design teammates, since the goal was to implement a barebones F0, so it felt that there was less designing to do. However, with our unique goals -- i.e. a plant crafting system -- still unfinished, that could be a place for design to think more creatively. 
 
 
 # Devlog Entry 12/6/2023
@@ -73,6 +76,3 @@ We're hoping to learn refactoring, especially with the changing requirements, an
     * there is a save button, it calls the save thing from f1.a and stores it in JSON. That json will first go to the save1 button, then save2 then save3 then discarded into the void because the programmer who was resposibile for this(me abraham) couldn't figure out how to do drop down menus. Also auto save has it's own button
 * [F1.d] The game must implement an implicit auto-save system to support recovery from unexpected quits. (For example, when the game is launched, if an auto-save entry is present, the game might ask the player "do you want to continue where you left off?" The auto-save entry might or might not be visible among the list of manual save entries available for the player to load as part of F1.c.)
     * Auto save is periodically triggered and saved in the auto save button. It's pretty inelegant but it works, kinda. Couldn't figure out how to read when the player quited so it just does it every set interval. Also there is only one autosave because more than one felt strange for a game. 
-
-## Reflection
-So far, Vite and TypeScript has been sufficient for implementing the F0 requirements, though we may want to change the right-click action to a different one, since currently it brings up an unneeded menu (even if the game does otherwise work as intended). As for team roles, since a few members were busy this week, it feels a bit as if roles had temporarily been swapped to accomodate, but it's likely that those roles will revert once all teammates are able to contribute again. This feels especially the case for the Design teammates, since the goal was to implement a barebones F0, so it felt that there was less designing to do. However, with our unique goals -- i.e. a plant crafting system -- still unfinished, that could be a place for design to think more creatively. 
