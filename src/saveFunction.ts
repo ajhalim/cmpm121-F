@@ -2,49 +2,79 @@ import { time } from "./main.ts";
 import { numTiles } from "./main.ts";
 import { cellData } from "./main.ts";
 import { xyPos } from "./main.ts";
-
-//import * as fs from 'fs';
-
+import { saveNum } from "./main.ts";
+//import { Plant } from "./plants";
 
 let text: string;
 
-//text = "";
+let grid: { time: number, xyPos: number[], sun: number, water: number, plantType: string, plantGrowth: number}[] = [
+  { "time": 0, "xyPos": [0,0], "sun": 0, "water": 0, "plantType": "none", "plantGrowth": 0}
+];
 
-//export let fs = require('fs');
-
-///fs.writeFileSync('./foo.txt', text);
-
+export function initGrid(){
+  for (let i = 0; i < numTiles; i++) {
+    let rowString = "";
+    let tileID = 0;
+    //let thing = ""
+    for (let j = 0; j < numTiles; j++) {
+    rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`
+    //grid[saveNum].sun = cellData[i][j].sunLevel;
+    //grid[saveNum].water = cellData[i][j].waterLevel;
+    if (cellData[i][j].plant != undefined) {
+        rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
+        //grid[saveNum].plantType = cellData[i][j].plant!.type;
+        //grid[saveNum].plantGrowth = cellData[i][j].plant!.growth;
+    }
+    else{
+    }
+    text += "\n";
+    grid.push({ "time": 0, "xyPos": [0,0], "sun": 0, "water": 0, "plantType": "none", "plantGrowth": 0});
+    tileID++;
+}
+}
+}
 export function saveGrid() {
+
     text = ""
-    //console.log("Time passed: " + time);
-    //console.log("Player is at: " + xyPos);
-    //console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
-    //fs.writeFileSync('./data.txt', String(time) + '\n');
-    //fs.writeFileSync('./data.txt', String(xyPos) + '\n');
-   // fs.writeFileSync('./data.txt', String(time) + '\n');
+    let currentTile = 0;
+    //console.log(grid[30])
    text += "Time passed: " + time + " \n";
+   //grid[saveNum].time = time;
    text += "Player is at: " + xyPos + " \n";
+   //grid[saveNum].xyPos = xyPos;
    text += "Grid Cells - Sun, Water, Plant Type, and Growth Level: ";
    
     for (let i = 0; i < numTiles; i++) {
         let rowString = "";
+        //let thing = ""
+        grid[currentTile].time = time;
+        grid[currentTile].xyPos = xyPos;
         for (let j = 0; j < numTiles; j++) {
         rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`
+        grid[currentTile].sun = cellData[i][j].sunLevel;
+        grid[currentTile].water = cellData[i][j].waterLevel;
         if (cellData[i][j].plant != undefined) {
             rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
+            grid[currentTile].plantType = cellData[i][j].plant!.type;
+            grid[currentTile].plantGrowth = cellData[i][j].plant!.growth;
+        }
+        else{
+          grid[currentTile].plantType = "none";
+          grid[currentTile].plantGrowth = 0;
         }
         text += "\n";
+        currentTile++;
     }
     text +=rowString;
-        //console.log(rowString);
-        /* fs.writeFile('data.txt', text, 'utf8', (err) => {
-            if (err) {
-              console.error('Error writing to file:', err);
-            } else {
-              console.log(`Successfully wrote to ${'data.txt'}`);
-            }
-        
-    }); */
 }   
+
+localStorage.setItem("grid", JSON.stringify(Array.from(grid)));
+
+const dataString = localStorage.getItem("grid");
+//console.log(dataString);
+  // save player coins to local storage
+  //localStorage.setItem("playerCoins", JSON.stringify(playerCoins));
 return text;
+
+
 }

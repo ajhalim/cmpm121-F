@@ -1,7 +1,7 @@
 import "./style.css";
 import { Plant } from "./plants";
 import { Memento } from "./Memento";
-import { saveGrid } from "./saveFunction";
+import { initGrid, saveGrid } from "./saveFunction";
 
 //setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -242,12 +242,12 @@ gridCanvas.onauxclick = (e) => {
 };
 
 //ABE'S NEW STUFF
-const textBox = document.createElement("input");
+/* const textBox = document.createElement("input");
 textBox.type = "text";
 textBox.placeholder = "Enter your name";
 textBox.value = "no data";
-textBox.id = "nameInput";
-document.getElementsByTagName("body")[0].appendChild(textBox);
+textBox.id = "nameInput"; */
+//document.getElementsByTagName("body")[0].appendChild(textBox);
 
 export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
@@ -277,7 +277,7 @@ function generateRandomLevels() {
 
 function printGridData() {
   console.log("Time passed: " + time);
-  console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
+  //console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
   for (let i = 0; i < numTiles; i++) {
     let rowString = "";
     for (let j = 0; j < numTiles; j++) {
@@ -287,18 +287,29 @@ function printGridData() {
       }
       rowString += "\n";
     }
-    console.log(rowString);
+    //console.log(rowString);
   }
 }
 
+initGrid();
+console.log("start")
 let autosave: string = "";
+export let saveNum: number = 0;
 // uncomment this later, abe
+
+
 function updateGridData() {
   generateRandomLevels();
   printGridData();
   autosave = saveGrid();
-  textBox.value = autosave;
+  //textBox.value = autosave;
+  saveNum++;
 }
+
+/* saveButton.addEventListener("click", () => {
+  undo();
+}); */
+//document.body.appendChild(saveButton);
 /*
 gridCanvas.addEventListener("click", (e) => {
   const coordX = Math.trunc(e.offsetX / tileSize);
@@ -374,6 +385,7 @@ const redoStack: Memento[] = [];
 
 const undoButton = document.getElementById("undoButton") as HTMLButtonElement;
 const redoButton = document.getElementById("redoButton") as HTMLButtonElement;
+const saveButton = document.getElementById("saveButton") as HTMLButtonElement;
 
 undoButton.addEventListener("click", () => {
   undo();
@@ -381,6 +393,9 @@ undoButton.addEventListener("click", () => {
 
 redoButton.addEventListener("click", () => {
   redo();
+});
+
+saveButton.addEventListener("click", () => {
 });
 
 // Function to undo the last action
