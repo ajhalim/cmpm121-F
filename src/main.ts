@@ -303,6 +303,10 @@ function updateGridData() {
   printGridData();
   //autosave = saveGrid();
   //textBox.value = autosave;
+
+  if(saveNum % 5 == 0){
+    saveGrid();
+  }
   saveNum++;
 }
 

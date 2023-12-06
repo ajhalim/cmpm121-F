@@ -70,8 +70,8 @@ export function saveGrid() {
 
 localStorage.setItem("grid", JSON.stringify(Array.from(grid)));
 
-const dataString = localStorage.getItem("grid");
-//console.log(dataString);
+const save1 = localStorage.getItem("grid");
+console.log(save1);
   // save player coins to local storage
   //localStorage.setItem("playerCoins", JSON.stringify(playerCoins));
 return text;
