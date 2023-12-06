@@ -1,9 +1,9 @@
 import "./style.css";
-import { Plant } from "./plants";
-import { Memento } from "./Memento";
+import { Plant, PlantType } from "./plants";
+import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
 
-//setting up the multiple canvases
+// Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
 const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -19,7 +19,7 @@ export interface CellData {
   plant?: Plant;
 }
 
-//defining the textures to use
+// Defining the textures to use
 const imageUrls = [
   "/tile1.png",
   "/tile2.png",
@@ -31,13 +31,13 @@ const imageUrls = [
   "/tile8.png",
 ];
 
-const playerImage = ["./player.png"];
+const playerImage = ["./player_tile.png"];
 
-//defining the size of the main grid
+// Defining the size of the main grid
 export const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
-//defining the size of the select grid
+// Defining the size of the select grid
 const numSelectables = imageUrls.length;
 const selectHeight = selectCanvas.height / numSelectables;
 
@@ -48,16 +48,18 @@ let pastTile: string = "nothing";
 export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
 export let time: number = 0;
 
+// DELETE SECTION? ------------
 // track the selected tile
 //let currentTile = 0;
 
 //let adjTiles = [];
+// ------------------------------
 
-// can change the names of the types later
-const plantTypes = ["species1", "species2", "species3"];
+// Can change the names of the types later
+const plantTypes: PlantType[] = ["species1", "species2", "species3"];
 let harvestTotal = 0;
 
-//creating the tilemap nested array
+// Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
 
 for (let i = 0; i < numTiles; i++) {
@@ -69,12 +71,14 @@ for (let i = 0; i < numTiles; i++) {
   tilemap[i] = row;
 }
 
+// DELETE SECTION? ---------------
 /* const svg: HTMLElement = create("svg");
 const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
 
 // function create(elementNone: any) {
 //     return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
 // }
+// -----------------------------------
 
 //draw the initial canvases
 redrawTilemap();
@@ -117,14 +121,13 @@ function redrawTilemap() {
 export function coordHelper(xPos: number, yPos: number) {
   /* if-statement makes sure to reset the tile that the player moves from to the img
     it was before the player moved onto it.*/
-  // tilemap[xPos][yPos].src = imageUrls[currentTile];
+
+  // DELETE COMMENTS? ---------------------------------------
   if (pastTile != "nothing") {
     lastXPos = xyPos[0];
     lastYPos = xyPos[1];
     tilemap[lastXPos][lastYPos].src = pastTile;
   }
-
-  //console.log(tilemap[xPos][yPos].src);
 
   pastTile = tilemap[xPos][yPos].src;
   tilemap[xPos][yPos].src = playerImage[0];
@@ -134,10 +137,10 @@ export function coordHelper(xPos: number, yPos: number) {
 
   redrawTilemap();
   time++;
-  //console.log(xyPos);
   return xyPos;
 }
 
+// DELETE FUNCTION? -----------------------------------
 // function adjCoords(xPos: number, yPos: number) {
 //     let adjacentTiles = new Array;
 
@@ -164,7 +167,7 @@ export function coordHelper(xPos: number, yPos: number) {
 //     //tilemap[coordX][coordY].src = imageUrls[currentTile];
 //     //redrawTilemap();
 // })
-
+// ------------------------------------------
 
 gridCanvas.onauxclick = (e) => {
   e.preventDefault();
@@ -172,12 +175,14 @@ gridCanvas.onauxclick = (e) => {
   const coordX = Math.trunc(e.offsetX / tileSize);
   const coordY = Math.trunc(e.offsetY / tileSize);
 
+  // DELETE? -------------
   // let thing =[];
   // thing = [coordX, coordY];
 
   /* if(pastTile != "nothing"){
         return;
     } */
+  // ------------------------
 
   /* Can only plant on squares adjacent to the player that haven't already been planted. */
   if (coordX >= xyPos[0] - 1 && coordX <= xyPos[0] + 1) {
@@ -200,9 +205,9 @@ gridCanvas.onauxclick = (e) => {
         ) {
           console.log(
             "harvested a " +
-              cellData[coordX][coordY].plant!.type +
-              " at level: " +
-              cellData[coordX][coordY].plant!.growth
+            cellData[coordX][coordY].plant!.type +
+            " at level: " +
+            cellData[coordX][coordY].plant!.growth
           );
           tilemap[coordX][coordY].src = imageUrls[0];
           cellData[coordX][coordY].plant = undefined;
@@ -215,6 +220,7 @@ gridCanvas.onauxclick = (e) => {
     }
   }
 
+  // DELETE SECTION? ------------------------------
   /* adjTiles = adjCoords(xyPos[0], xyPos[1]);
 
     console.log(adjTiles);
@@ -239,15 +245,16 @@ gridCanvas.onauxclick = (e) => {
     } */
 
   //console.log("rat")
+  // -------------------------------
 };
 
 //ABE'S NEW STUFF
-/* const textBox = document.createElement("input");
-textBox.type = "text";
-textBox.placeholder = "Enter your name";
-textBox.value = "no data";
-textBox.id = "nameInput"; */
-//document.getElementsByTagName("body")[0].appendChild(textBox);
+// const textBox = document.createElement("input");
+// textBox.type = "text";
+// textBox.placeholder = "Enter your name";
+// textBox.value = "no data";
+// textBox.id = "nameInput";
+// document.getElementsByTagName("body")[0].appendChild(textBox);
 
 export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
@@ -257,9 +264,6 @@ for (let i = 0; i < numTiles; i++) {
   }
   cellData[i] = row;
 }
-
-let text: string;
-text = "";
 
 function generateRandomLevels() {
   for (let i = 0; i < numTiles; i++) {
@@ -277,39 +281,35 @@ function generateRandomLevels() {
 
 function printGridData() {
   console.log("Time passed: " + time);
-  //console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
+  console.log("Grid Cells - Sun, Water, Plant Type, and Growth Level:");
   for (let i = 0; i < numTiles; i++) {
     let rowString = "";
     for (let j = 0; j < numTiles; j++) {
       rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`;
       if (cellData[i][j].plant != undefined) {
-        rowString += `, Plant Type: ${cellData[i][j].plant?.type}, Growth Level: ${cellData[i][j].plant?.growth} |`;
+        rowString += `, Plant Type: ${cellData[i][j].plant!.type}, Growth Level: ${cellData[i][j].plant!.growth} |`;
       }
       rowString += "\n";
     }
-    //console.log(rowString);
+    console.log(rowString);
   }
 }
-
-initGrid();
-console.log("start")
-let autosave: string = "";
-export let saveNum: number = 0;
-// uncomment this later, abe
-
 
 function updateGridData() {
   generateRandomLevels();
   printGridData();
-  //autosave = saveGrid();
-  //textBox.value = autosave;
+  // autosave = saveGrid();
+  // textBox.value = autosave;
 
-  if(saveNum % 5 == 0){
+  if (saveNum % 5 == 0) {
     saveGrid();
   }
   saveNum++;
+
+  saveSlot(0);
 }
 
+// DELETE? -----------------------
 /* saveButton.addEventListener("click", () => {
   undo();
 }); */
@@ -325,28 +325,7 @@ gridCanvas.addEventListener("click", (e) => {
   updateGridData();
 });
 */
-// Call updateGridData initially to set initial levels
-updateGridData();
-
-/* Select Canvas Functions (currently unused) */
-// ----- Interacting with the selectable tilemap -----
-
-// Loop through the selectable tiles and draw textures in each cell
-function drawSelectCanvas() {
-  for (let i = 0; i < numSelectables; i++) {
-    const selectableImage = new Image();
-    selectableImage.src = imageUrls[i];
-    drawTexture(
-      0,
-      i,
-      selectCtx,
-      selectableImage,
-      selectCanvas.width,
-      selectHeight,
-      64
-    );
-  }
-}
+// ---------------------------------------
 
 const undoStack: Memento[] = [];
 const redoStack: Memento[] = [];
@@ -355,25 +334,61 @@ const undoButton = document.getElementById("undoButton") as HTMLButtonElement;
 const redoButton = document.getElementById("redoButton") as HTMLButtonElement;
 const saveButton = document.getElementById("saveButton") as HTMLButtonElement;
 
+const saveFiles: SaveFile[] = [];
 const saveFile1 = document.getElementById("saveFile1") as HTMLButtonElement;
 const saveFile2 = document.getElementById("saveFile2") as HTMLButtonElement;
 const saveFile3 = document.getElementById("saveFile3") as HTMLButtonElement;
 
+const restore1 = document.getElementById("restoreFile1") as HTMLButtonElement;
+const restore2 = document.getElementById("restoreFile2") as HTMLButtonElement;
+const restore3 = document.getElementById("restoreFile3") as HTMLButtonElement;
+
+const clearSaves = document.getElementById("clearSaves") as HTMLButtonElement;
+const displayGrid = document.getElementById("displayGrid") as HTMLButtonElement;
+
 undoButton.addEventListener("click", () => {
   undo();
-  ///console.log("rat")
 });
 
 redoButton.addEventListener("click", () => {
   redo();
-  //console.log("rat")
 });
 
 saveButton.addEventListener("click", () => {
-  saveGrid()
+  saveGrid();
 });
 
+saveFile1.addEventListener("click", () => {
+  saveSlot(1);
+});
 
+saveFile2.addEventListener("click", () => {
+  saveSlot(2);
+});
+
+saveFile3.addEventListener("click", () => {
+  saveSlot(3);
+});
+
+restore1.addEventListener("click", () => {
+  restoreSave(1);
+});
+
+restore2.addEventListener("click", () => {
+  restoreSave(2);
+});
+
+restore3.addEventListener("click", () => {
+  restoreSave(3);
+});
+
+clearSaves.addEventListener("click", () => {
+  localStorage.clear();
+});
+
+displayGrid.addEventListener("click", () => {
+  console.log(localStorage.getItem("grid"));
+});
 
 // Function to undo the last action
 function undo() {
@@ -468,6 +483,45 @@ function restoreState(state: Memento) {
   redrawTilemap();
 }
 
+// Function to save a specific grid state to localStorage
+function saveSlot(slot: number) {
+  saveFiles[slot] = (new SaveFile(
+    tilemap.map((row) =>
+      row.map((cell) => {
+        return cell.src;
+      })
+    ),
+    cellData.map((row) => row.map((cell) => ({ ...cell }))),
+    xyPos.slice(),
+    time,
+    pastTile = pastTile,
+  ));
+  localStorage.setItem("save" + slot, JSON.stringify(saveFiles[slot]));
+  console.log("Saved to slot" + slot + ".");
+}
+
+// Function to restore a saved grid state from localStorage
+function restoreSave(slot: number) {
+  const savedState = JSON.parse(localStorage.getItem("save" + slot)!);
+  tilemap = savedState.tilemap.map((row: any[]) =>
+    row.map((cell) => {
+      const img = new Image();
+      img.src = cell;
+      return img;
+    })
+  );
+  cellData = savedState.cellData.map((row: any[]) =>
+    row.map((cell) => ({ ...cell }))
+  );
+  xyPos = savedState.xyPos.slice();
+  time = savedState.time;
+  pastTile = savedState.pastTile;
+
+  // Redraw the tilemap
+  redrawTilemap();
+  console.log("Restored from slot" + slot + ".");
+}
+
 // ... (Your existing code)
 
 // Modify your existing click event listener to save the state before updating the grid data
@@ -482,3 +536,39 @@ gridCanvas.addEventListener("click", (e) => {
   // Update grid data after the player moves
   updateGridData();
 });
+
+
+console.log("Start")
+
+if (localStorage.getItem("save0"))
+{
+  restoreSave(0);
+  redrawTilemap(); 
+}
+
+// let autosave: string = "";
+export let saveNum: number = 0;
+// uncomment this later, abe
+initGrid();
+// Call updateGridData initially to set initial levels
+updateGridData();
+
+/* Select Canvas Functions (currently unused) */
+// ----- Interacting with the selectable tilemap -----
+
+// Loop through the selectable tiles and draw textures in each cell
+function drawSelectCanvas() {
+  for (let i = 0; i < numSelectables; i++) {
+    const selectableImage = new Image();
+    selectableImage.src = imageUrls[i];
+    drawTexture(
+      0,
+      i,
+      selectCtx,
+      selectableImage,
+      selectCanvas.width,
+      selectHeight,
+      64
+    );
+  }
+}
