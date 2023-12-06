@@ -468,9 +468,6 @@ function restoreState(state: Memento) {
   redrawTilemap();
 }
 
-// ... (Your existing code)
-
-// Modify your existing click event listener to save the state before updating the grid data
 gridCanvas.addEventListener("click", (e) => {
   saveStateToUndoStack(); // Save state before updating the grid data
 
