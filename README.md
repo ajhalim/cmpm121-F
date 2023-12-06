@@ -51,22 +51,15 @@ So far, Vite and TypeScript has been sufficient for implementing the F0 requirem
 
 
 # Devlog Entry 12/6/2023
+## Available choices: How can a first-time player quickly identify what they are trying to do and how to achieve it?
+* The player can click and move around the space, right clicking makes a different sprite come up. and also we have a little set of instructions in a text box on the page stating that m1 moves the player and m2 allows for reap and sowing.
+* Have another text box to tell the player the goal of growing plants via right clicking and waiting and right clicking them again when ready
+
+## Impacts of choices:
+* 
+
 ## How we satisfied the software requirements
-* [F0.a] You control a character moving on a 2D grid.
-    * The character, represented by a tile image, moves to a grid cell based on mouse click. The player can move to any grid cell without limit, but can still only access nearby tiles for sowing/reaping plants.
-* [F0.b] You advance time in the turn-based simulation manually.
-    * Every time the player moves, a.k.a. when the player clicks on the grid with their mouse, time moves by one step. Each time step will re-randomize the sun levels, add a random amount of water to each grid cell, and call the advanceTime() function on a plant if one exists for that grid cell.  
-* [F0.c] You can reap (gather) or sow (plant) plants on the grid when your character is near them.
-    * Grid cells directly adjacent to the player (8 total) can be sowed with plants. Currently that means set to a different tile image based on the type of plant sowed. This can only be done provided that the tile in that spot is the default grass tile
-    * Grid cells can be reaped from if the adjacent cell has a plant that has a growth level of 2 or more; the process resets the tile back to default (green grass tile, no plant).
-* [F0.d] Grid cells have sun and water levels. The incoming sun and water for each cell is somehow randomly generated each turn. Sun energy cannot be stored in a cell (it is used immediately or lost) while water moisture can be slowly accumulated over several turns.
-    * Using an array of CellData objects, sun and water levels are stored in each of the grid cells. Sun is randomly generated each time step, but water is aggregated over time.
-* [F0.e] Each plant on the grid has a type (e.g. one of 3 species) and a growth level (e.g. “level 1”, “level 2”, “level 3”).
-    * If a player plants a plant in a grid cell, then the plant has a type "species1-3" randomly generated. It starts at growth = 1.
-* [F0.f] Simple spatial rules govern plant growth based on sun, water, and nearby plants (growth is unlocked by satisfying conditions).
-    * Plants increase their growth level when the amount of sun is greater than 50 and enough water has been aggregated (the requirement is 100 at first, and increments by 100 per each growth level achieved).
-* [F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
-    * If 10 plants have been harvested, a victory message is printed to console.
+* [F0] our requirements for f0 stay largely the same. The plant type has been changed to a string literal, but otherwise implementation hasn't changed much. We still satisfy f0.a by clicking to move the player, f0.b by automatically incrementing time each step, f0.c by using right click on tiles next to the player to plant and harvest "plants", and f0.d by storing weather information inside a CellData object (with levels randomly re-generated each time step). F0.e is still satisfied through a string label, but as mentioned before that label has been defined as a "PlantType" which ensures the label will be only one of the three types defined, species1, species2, and species3. F0.f is satisfied by the plant interacting with the sun/water levels in the cell data, and f0.g is satisfied by the victory message printed after harvesting 10 plants
       
  * [F1.a] The important state of each cell of your game’s grid must be backed by a single contiguous byte array in AoS or SoA format. Your team must statically allocate memory usage for the whole grid.
     * All the cells of the grid have their data stored in a SOA style byte array that can be saved locally via the magic of JSON. It's statically done. On first boot up grid is saved as a blank grid. When the save button is pressed or Autosave is triggered it reads the whole grid and saves the data locally via JSON
