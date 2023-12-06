@@ -355,6 +355,10 @@ const undoButton = document.getElementById("undoButton") as HTMLButtonElement;
 const redoButton = document.getElementById("redoButton") as HTMLButtonElement;
 const saveButton = document.getElementById("saveButton") as HTMLButtonElement;
 
+const saveFile1 = document.getElementById("saveFile1") as HTMLButtonElement;
+const saveFile2 = document.getElementById("saveFile2") as HTMLButtonElement;
+const saveFile3 = document.getElementById("saveFile3") as HTMLButtonElement;
+
 undoButton.addEventListener("click", () => {
   undo();
   ///console.log("rat")
@@ -368,6 +372,8 @@ redoButton.addEventListener("click", () => {
 saveButton.addEventListener("click", () => {
   saveGrid()
 });
+
+
 
 // Function to undo the last action
 function undo() {
