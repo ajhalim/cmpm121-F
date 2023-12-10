@@ -1,0 +1,12 @@
+{"Plants":{
+    "rose":{
+        "growth": 1,
+        "water": 1,
+        "waterRequirement": 1,
+        "positon": [[1,1], [2,2]]
+    }
+
+    
+}}
+
+

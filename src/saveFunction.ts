@@ -7,7 +7,7 @@ import { saveNum } from "./main.ts";
 
 let text: string;
 
-let grid: { time: number, xyPos: number[], sun: number, water: number, plantType: string, plantGrowth: number }[] = [
+export let grid: { time: number, xyPos: number[], sun: number, water: number, plantType: string, plantGrowth: number }[] = [
   { "time": 0, "xyPos": [0, 0], "sun": 0, "water": 0, "plantType": "none", "plantGrowth": 0 }
 ];
 

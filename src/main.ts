@@ -2,6 +2,9 @@ import "./style.css";
 import { Plant, PlantType } from "./plants";
 import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
+import { reader } from "./externalStuff";
+
+reader();
 
 // Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
