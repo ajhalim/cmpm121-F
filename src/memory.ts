@@ -1,13 +1,11 @@
 // [F1.a] 
 // The important state of each cell of your game’s grid must be backed by a single contiguous byte array 
 // in AoS or SoA format. Your team must statically allocate memory usage for the whole grid.
-import { Plant } from "./plants";
 
 // Define CellData interface representing the state of each cell in the grid
 interface CellData {
     sunLevel: number;
     waterLevel: number;
-    plant?: Plant;
 }
 
 // Memory class responsible for managing grid data in a contiguous byte array

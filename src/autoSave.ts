@@ -1,10 +1,8 @@
 // autoSave.ts
-import { Plant } from "./plants";
 
 interface CellData {
     sunLevel: number;
     waterLevel: number;
-    plant?: Plant;
 }
 
 export class AutoSave {
