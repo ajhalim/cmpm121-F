@@ -1,7 +1,8 @@
 //import data from '../example.json' assert { type: 'json' };
-import {waterLevel, sunLevel, cellData} from './main.ts'
+//import {plantTypes, cellData} from './main.ts'
 
 // Internal DSL -----------------
+
 interface SoilState {
   SunLevel: number;
   WaterLevel: number;
