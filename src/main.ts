@@ -4,6 +4,8 @@ import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
 import { reader, generateEventLevels } from "./externalStuff";
 
+reader();
+
 // Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
 const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
@@ -50,13 +52,6 @@ let pastTile: string = "nothing";
 export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
 export let time: number = 0;
 
-// DELETE SECTION? ------------
-// track the selected tile
-//let currentTile = 0;
-
-//let adjTiles = [];
-// ------------------------------
-
 // Can change the names of the types later
 const plantTypes: PlantType[] = ["species1", "species2", "species3"];
 let harvestTotal = 0;
@@ -65,7 +60,6 @@ let harvestWin = 5;
 let test = reader();
 
 //seting number of harvests to win
-//harvestWin = reader();
 
 // Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -78,15 +72,6 @@ for (let i = 0; i < numTiles; i++) {
   }
   tilemap[i] = row;
 }
-
-// DELETE SECTION? ---------------
-/* const svg: HTMLElement = create("svg");
-const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
-
-// function create(elementNone: any) {
-//     return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
-// }
-// -----------------------------------
 
 //draw the initial canvases
 redrawTilemap();
@@ -130,7 +115,6 @@ export function coordHelper(xPos: number, yPos: number) {
   /* if-statement makes sure to reset the tile that the player moves from to the img
     it was before the player moved onto it.*/
 
-  // DELETE COMMENTS? ---------------------------------------
   if (pastTile != "nothing") {
     lastXPos = xyPos[0];
     lastYPos = xyPos[1];
@@ -140,8 +124,6 @@ export function coordHelper(xPos: number, yPos: number) {
   pastTile = tilemap[xPos][yPos].src;
   tilemap[xPos][yPos].src = playerImage[0];
   xyPos = [xPos, yPos];
-
-  //adjTiles = adjCoords(xPos, yPos);
 
   redrawTilemap();
   time++;
@@ -195,7 +177,7 @@ gridCanvas.onauxclick = (e) => {
 const textBox = document.createElement("input");
 textBox.type = "text";
 textBox.placeholder = "Enter your name";
-textBox.value = "left click to move, right click to sow/reep";
+textBox.value = "left click to move, right click to sow/reap";
 textBox.id = "nameInput";
 document.getElementsByTagName("body")[0].appendChild(textBox);
 
@@ -216,6 +198,7 @@ function generateRandomLevels() {
       currCell.sunLevel = Math.floor(Math.random() * 100);
       currCell.waterLevel += Math.floor(Math.random() * 100);
       currCell.cellTime += 1;
+
       if (currCell.plant != undefined) {
         currCell.plant?.advanceTime(currCell.sunLevel, currCell.waterLevel);
       }
@@ -245,8 +228,6 @@ function updateGridData() {
   generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
   generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
   printGridData();
-  // autosave = saveGrid();
-  // textBox.value = autosave;
 
   if (saveNum % 5 == 0) {
     saveGrid();
@@ -255,24 +236,6 @@ function updateGridData() {
 
   saveSlot(0);
 }
-
-// DELETE? -----------------------
-/* saveButton.addEventListener("click", () => {
-  undo();
-}); */
-//document.body.appendChild(saveButton);
-/*
-gridCanvas.addEventListener("click", (e) => {
-  const coordX = Math.trunc(e.offsetX / tileSize);
-  const coordY = Math.trunc(e.offsetY / tileSize);
-
-  coordHelper(coordX, coordY);
-
-  // Update grid data after the player moves
-  updateGridData();
-});
-*/
-// ---------------------------------------
 
 const undoStack: Memento[] = [];
 const redoStack: Memento[] = [];
@@ -501,7 +464,6 @@ if(reader != null && time == 0){
   console.log(harvestWin);
 }
 
-// let autosave: string = "";
 export let saveNum: number = 0;
 // uncomment this later, abe
 initGrid();
