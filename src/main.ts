@@ -6,14 +6,9 @@ import { reader, generateEventLevels } from "./externalStuff";
 
 reader();
 
-// Setting up the multiple canvases
+// Setting up the main canvas
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
 const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
-
-const selectCanvas = document.getElementById(
-  "selectCanvas"
-) as HTMLCanvasElement;
-const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 // Data structure storing the data of sun and water level
 export interface CellData {
@@ -41,10 +36,6 @@ const playerImage = ["./player_tile.png"];
 export const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
-// Defining the size of the select grid
-const numSelectables = imageUrls.length;
-const selectHeight = selectCanvas.height / numSelectables;
-
 let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
@@ -59,8 +50,6 @@ let harvestWin = 5;
 
 let test = reader();
 
-//seting number of harvests to win
-
 // Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
 
@@ -73,9 +62,8 @@ for (let i = 0; i < numTiles; i++) {
   tilemap[i] = row;
 }
 
-//draw the initial canvases
+// draw the initial canvas
 redrawTilemap();
-drawSelectCanvas();
 
 //Function that draws a texture to a specific canvas ctx
 function drawTexture(
@@ -469,23 +457,3 @@ export let saveNum: number = 0;
 initGrid();
 // Call updateGridData initially to set initial levels
 updateGridData();
-
-/* Select Canvas Functions (currently unused) */
-// ----- Interacting with the selectable tilemap -----
-
-// Loop through the selectable tiles and draw textures in each cell
-function drawSelectCanvas() {
-  for (let i = 0; i < numSelectables; i++) {
-    const selectableImage = new Image();
-    selectableImage.src = imageUrls[i];
-    drawTexture(
-      0,
-      i,
-      selectCtx,
-      selectableImage,
-      selectCanvas.width,
-      selectHeight,
-      64
-    );
-  }
-}
