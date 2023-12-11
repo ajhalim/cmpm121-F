@@ -8,13 +8,13 @@ export class UndoRedo {
     static history: Uint8Array[] = [];
     static currentStep: number = -1;
 
-    static saveState() {
+    static saveMemoryState() {
         const currentState = new Uint8Array(Memory.gridData);
         UndoRedo.history.push(currentState);
         UndoRedo.currentStep = UndoRedo.history.length - 1;
     }
 
-    static undo(): Uint8Array | undefined {
+    static undoMemory(): Uint8Array | undefined {
         if (UndoRedo.currentStep > 0) {
             UndoRedo.currentStep--;
             const previousState = new Uint8Array(UndoRedo.history[UndoRedo.currentStep]);
@@ -24,7 +24,7 @@ export class UndoRedo {
         return undefined;
     }
 
-    static redo(): Uint8Array | undefined {
+    static redoMemory(): Uint8Array | undefined {
         if (UndoRedo.currentStep < UndoRedo.history.length - 1) {
             UndoRedo.currentStep++;
             const nextState = new Uint8Array(UndoRedo.history[UndoRedo.currentStep]);
