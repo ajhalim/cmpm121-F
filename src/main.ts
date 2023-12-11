@@ -21,6 +21,13 @@ export interface CellData {
   cellTime: number;
 }
 
+//Problem area
+/* const inputElement = document.getElementById("input") as HTMLElement;
+inputElement.addEventListener("change", handleFiles, false);
+function handleFiles() {
+  const fileList = this.files;
+} */
+
 // Defining the textures to use
 const imageUrls = [
   "/tile1.png",
@@ -78,15 +85,6 @@ for (let i = 0; i < numTiles; i++) {
   }
   tilemap[i] = row;
 }
-
-// DELETE SECTION? ---------------
-/* const svg: HTMLElement = create("svg");
-const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
-
-// function create(elementNone: any) {
-//     return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
-// }
-// -----------------------------------
 
 //draw the initial canvases
 redrawTilemap();
