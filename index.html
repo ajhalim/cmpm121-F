@@ -1,25 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title></title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <canvas id="gridCanvas" width ="512" height ="512"></canvas>
-    <canvas id="selectCanvas" width ="64" height ="512"></canvas>
-    <button id="undoButton">Undo</button>
-    <button id="redoButton">Redo</button>
-    <button id="saveButton">Save</button>
-    <button id="saveFile1">Save1</button>
-    <button id="saveFile2">Save2</button>
-    <button id="saveFile3">Save3</button>
-    <button id="restoreFile1">Restore1</button>
-    <button id="restoreFile2">Restore2</button>
-    <button id="restoreFile3">Restore3</button>
-    <button id="clearSaves">Clear Saves</button>
-    <button id="displayGrid">Print Grid</button>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+    margin: 0;
+    overflow: hidden;
+    background: url('background.png') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  canvas {
+    position: absolute;
+    z-index: 1;
+  }
+
+  #gridCanvas {
+    top: 60px;
+    left: 60px;
+  }
+
+  #selectCanvas {
+    display: none;
+  }
+
+  #app {
+    position: absolute;
+    z-index: 2;
+  }
+
+  #overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('overlay.png') no-repeat center center fixed;
+    background-size: cover;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  #buttonContainer {
+    position: absolute;
+    top: 60px;
+    left: 572px;
+    display: flex;
+    flex-direction: row;
+    height: 300px;
+    width: 600px;
+    background: transparent; /* Make the container clear */
+  }
+
+  button {
+    width: 200px;
+    height: 80px;
+    margin-right: 10px;
+    z-index: 999;
+    position: absolute;
+    background: transparent; /* Make the button clear */
+    color: wheat; /* Set font color to white */
+    font-size: 30px; /* Adjust font size as needed */
+  }
+
+  </style>
+  <title></title>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="overlay"></div>
+  <div id="buttonContainer">
+    <!-- Save buttons with custom coordinates -->
+    <button id="save-1" style="top: 10px; left: 40px;">Save 1</button>
+    <button id="load-1" style="top: 10px; left: 300px;">Load 1</button>
+
+    <button id="save-2" style="top: 140px; left: 40px;">Save 2</button>
+    <button id="load-2" style="top: 140px; left: 300px;">Load 2</button>
+
+    <button id="save-3" style="top: 270px; left: 40px;">Save 3</button>
+    <button id="load-3" style="top: 270px; left: 300px;">Load 3</button>
+
+    <!-- Auto-save button with custom coordinates -->
+    <button id="load-auto" style="top: 420px; left: 40px;">Load Auto</button>
+
+    <!-- Undo and Redo Button with custom coordinates -->
+    <button id="Undo" style="bottom: -320px; left: -480px;">Undo</button>
+    <button id="Redo" style="bottom: -320px; left: -220px;">Redo</button>
+
+  </div>
+  <canvas id="gridCanvas" width="512" height="512"></canvas>
+  <canvas id="selectCanvas" width="" height="512"></canvas>
+  <script type="module" src="/src/main.ts"></script>
+</body>
 </html>

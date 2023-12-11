@@ -15,7 +15,7 @@ const selectCanvas = document.getElementById("selectCanvas") as HTMLCanvasElemen
 const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 // Data structure storing the data of sun and water level
-interface CellData {
+export interface CellData {
     sunLevel: number;
     waterLevel: number;
     plant?: Plant;
@@ -33,12 +33,32 @@ const imageUrls = [
     "/tile8.png"
 ];
 
+// Exporting a background image
+const backgroundImage = new Image();
+backgroundImage.src = "./background.png";
+
+// Draw the background image
+backgroundImage.onload = () => {
+    gridCtx.drawImage(backgroundImage, 0, 0, gridCanvas.width, gridCanvas.height);
+    
+    // Draw the tilemap on top of the background
+    for (let i = 0; i < numTiles; i++) {
+        for (let j = 0; j < numTiles; j++) {
+            drawTexture(i, j, gridCtx, tilemap[i][j], gridCanvas.width / numTiles, gridCanvas.height / numTiles, tileSize);
+        }
+    }
+};
+
+// Set the source of the background image
+backgroundImage.src = "./background.png";
+
+
 const playerImage = [
     "./player.png"
 ]
 
 // Defining the size of the main grid
-const numTiles = 10;
+export const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
 // Initialize memory for the grid
@@ -76,8 +96,8 @@ let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
 
-let xyPos: number[];
-let time: number = 0;
+export let xyPos: number[];
+export let time: number = 0;
 
 // Can change the names of the types later //
 const plantTypes = ["species1", "species2", "species3"];
@@ -108,7 +128,12 @@ function drawTexture(row: number, col: number, ctx: CanvasRenderingContext2D, im
 
 // Interacting with the main tilemap
 function redrawTilemap() {
-  gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+    gridCtx.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
+
+    // Draw the background image
+    gridCtx.drawImage(backgroundImage, 0, 0, gridCanvas.width, gridCanvas.height);
+
+    // Draw the tilemap on top of the background
     for (let i = 0; i < numTiles; i++) {
         for (let j = 0; j < numTiles; j++) {
             drawTexture(i, j, gridCtx, tilemap[i][j], gridCanvas.width / numTiles, gridCanvas.height / numTiles, tileSize);
@@ -276,7 +301,7 @@ function manualLoad(slotNumber: number) {
 const buttonContainer = document.createElement("div");
 buttonContainer.style.position = "absolute";
 buttonContainer.style.bottom = "0";
-buttonContainer.style.left = "0";
+buttonContainer.style.right = "0";  // Change from left to right
 buttonContainer.style.display = "flex";
 buttonContainer.style.flexDirection = "row"; // Change to row direction
 document.body.appendChild(buttonContainer);
