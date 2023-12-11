@@ -1,5 +1,3 @@
-// DELETE FILE? (seems like repeat of main file)
-
 import "./style.css";
 
 interface CellData {

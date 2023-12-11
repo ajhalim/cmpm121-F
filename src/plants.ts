@@ -1,12 +1,10 @@
-export type PlantType = "species1" | "species2" | "species3";
-
 export class Plant {
-    type: PlantType;
+    type: string;
     growth: number;
     water: number;
     waterRequirement: number;
 
-    constructor(type: PlantType, growth: number, water: number) {
+    constructor(type: string, growth: number, water: number) {
         this.type = type;
         this.water = water;
         this.growth = growth;
