@@ -55,6 +55,7 @@ function internalPlantTypeCompiler(program: (dsl: PlantDefinitionLanguage) => vo
   return internalPlantType;
 }
 
+// Where we will create the different plant types
 const allInternalPlantTypes = [
   internalPlantTypeCompiler($ => {
     $.name("species1");
