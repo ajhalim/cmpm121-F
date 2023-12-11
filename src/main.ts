@@ -2,9 +2,7 @@ import "./style.css";
 import { Plant, PlantType } from "./plants";
 import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
-import { reader } from "./externalStuff";
-
-reader();
+import { reader, generateEventLevels } from "./externalStuff";
 
 // Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -20,6 +18,7 @@ export interface CellData {
   sunLevel: number;
   waterLevel: number;
   plant?: Plant;
+  cellTime: number;
 }
 
 // Defining the textures to use
@@ -61,6 +60,12 @@ export let time: number = 0;
 // Can change the names of the types later
 const plantTypes: PlantType[] = ["species1", "species2", "species3"];
 let harvestTotal = 0;
+let harvestWin = 5;
+
+let test = reader();
+
+//seting number of harvests to win
+//harvestWin = reader();
 
 // Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -177,7 +182,7 @@ gridCanvas.onauxclick = (e) => {
           tilemap[coordX][coordY].src = imageUrls[0];
           cellData[coordX][coordY].plant = undefined;
           harvestTotal++;
-          if (harvestTotal == 10) {
+          if (harvestTotal == harvestWin) {
             console.log("You won!");
           }
         }
@@ -198,7 +203,7 @@ export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
   let row = new Array(numTiles);
   for (let j = 0; j < numTiles; j++) {
-    row[j] = { sunLevel: 0, waterLevel: 0 };
+    row[j] = { sunLevel: 0, waterLevel: 0, cellTime: 0};
   }
   cellData[i] = row;
 }
@@ -210,6 +215,7 @@ function generateRandomLevels() {
       // Generate random levels (you can adjust the range based on your requirements)
       currCell.sunLevel = Math.floor(Math.random() * 100);
       currCell.waterLevel += Math.floor(Math.random() * 100);
+      currCell.cellTime += 1;
       if (currCell.plant != undefined) {
         currCell.plant?.advanceTime(currCell.sunLevel, currCell.waterLevel);
       }
@@ -223,7 +229,7 @@ function printGridData() {
   for (let i = 0; i < numTiles; i++) {
     let rowString = "";
     for (let j = 0; j < numTiles; j++) {
-      rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`;
+      rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}, Time: ${cellData[i][j].cellTime}`;
       if (cellData[i][j].plant != undefined) {
         rowString += `, Plant Type: ${cellData[i][j].plant!.type}, Growth Level: ${cellData[i][j].plant!.growth} |`;
       }
@@ -235,6 +241,9 @@ function printGridData() {
 
 function updateGridData() {
   generateRandomLevels();
+  generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
+  generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
+  generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
   printGridData();
   // autosave = saveGrid();
   // textBox.value = autosave;
@@ -482,6 +491,14 @@ if (localStorage.getItem("save0"))
 {
   restoreSave(0);
   redrawTilemap(); 
+}
+
+if(reader != null && time == 0){
+
+  harvestWin = test.winCond;
+  coordHelper(test.playerPos[0], test.playerPos[1]);
+
+  console.log(harvestWin);
 }
 
 // let autosave: string = "";
