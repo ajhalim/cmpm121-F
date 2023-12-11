@@ -2,28 +2,22 @@ import "./style.css";
 import { Plant, PlantType } from "./plants";
 import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
-import { reader, generateEventLevels } from "./externalStuff";
 
-reader();
-
-// Setting up the main canvas
+// Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
 const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+const selectCanvas = document.getElementById(
+  "selectCanvas"
+) as HTMLCanvasElement;
+const selectCtx = selectCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 // Data structure storing the data of sun and water level
 export interface CellData {
   sunLevel: number;
   waterLevel: number;
   plant?: Plant;
-  cellTime: number;
 }
-
-//Problem area
-/* const inputElement = document.getElementById("input") as HTMLElement;
-inputElement.addEventListener("change", handleFiles, false);
-function handleFiles() {
-  const fileList = this.files;
-} */
 
 // Defining the textures to use
 const imageUrls = [
@@ -43,6 +37,10 @@ const playerImage = ["./player_tile.png"];
 export const numTiles = 10;
 const tileSize = gridCanvas.width / numTiles;
 
+// Defining the size of the select grid
+const numSelectables = imageUrls.length;
+const selectHeight = selectCanvas.height / numSelectables;
+
 let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
@@ -50,12 +48,88 @@ let pastTile: string = "nothing";
 export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
 export let time: number = 0;
 
+// DELETE SECTION? ------------
+// track the selected tile
+//let currentTile = 0;
+
+//let adjTiles = [];
+// ------------------------------
+
+// Internal DSL -----------------
+interface SoilState {
+  SunLevel: number;
+  WaterLevel: number;
+}
+
+interface CellDetails {
+  soilState: SoilState;
+  plant?: Plant;
+}
+
+interface Plant {
+  type: string;
+  level: number;
+  isAlive: boolean;
+}
+
+interface PlantDefinitionLanguage {
+  name(name: string): void;
+  growthCheckFrequency(frequency: number): void;
+  growsWhen(growsWhen: (context: GrowthContext) => boolean): void;
+}
+
+interface GrowthContext {
+  plant: Plant;
+  cell: CellDetails;
+  neighborCells: CellDetails[];
+}
+
+class InternalPlantType {
+  fullName: string = "plant";
+  growthCheckFrequency: number = 1;
+  nextLevel: (context: GrowthContext) => number = (ctx) => ctx.plant.level;
+}
+
+function internalPlantTypeCompiler(program: (dsl: PlantDefinitionLanguage) => void): InternalPlantType {
+  const internalPlantType = new InternalPlantType();
+  const dsl: PlantDefinitionLanguage = {
+    name(name: string): void {
+      internalPlantType.fullName = name;
+    },
+    growthCheckFrequency(frequency: number): void {
+      internalPlantType.growthCheckFrequency = frequency;
+    },
+    growsWhen(growsWhen: (context: GrowthContext) => boolean): void {
+      internalPlantType.nextLevel = (ctx) => {
+        return ctx.plant.level + (growsWhen(ctx) ? 1 : 0);
+      };
+    },
+  };
+  program(dsl);
+  return internalPlantType;
+}
+
+const allInternalPlantTypes = [
+  internalPlantTypeCompiler($ => {
+    $.name("species1");
+    $.growthCheckFrequency(2);
+    $.growsWhen(({ plant, cell, neighborCells}) => {
+      const neighborPlants = neighborCells
+        .map(neighborCells => neighborCells.plant)
+        .filter(plant => plant !== undefined) as Plant[];
+      const isHappy = neighborPlants
+        .filter(neighbor => neighbor.type === plant.type)
+        .filter(neighbor => neighbor.level === Math.min(1, plant.level - 1))
+        .length >= 2;
+      return isHappy && cell.soilState.WaterLevel > 0.5 && cell.soilState.SunLevel > 0.5;
+    });
+  }),
+]
+// --------------------------------------
+
 // Can change the names of the types later
 const plantTypes: PlantType[] = ["species1", "species2", "species3"];
 let harvestTotal = 0;
-let harvestWin = 5;
-
-let test = reader();
 
 // Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -69,8 +143,18 @@ for (let i = 0; i < numTiles; i++) {
   tilemap[i] = row;
 }
 
-// draw the initial canvas
+// DELETE SECTION? ---------------
+/* const svg: HTMLElement = create("svg");
+const svgContainer: HTMLElement | null = document.getElementById("svgContainer"); */
+
+// function create(elementNone: any) {
+//     return document.createElementNS("http://www.w3.org/2000/svg", elementNone);
+// }
+// -----------------------------------
+
+//draw the initial canvases
 redrawTilemap();
+drawSelectCanvas();
 
 //Function that draws a texture to a specific canvas ctx
 function drawTexture(
@@ -110,6 +194,7 @@ export function coordHelper(xPos: number, yPos: number) {
   /* if-statement makes sure to reset the tile that the player moves from to the img
     it was before the player moved onto it.*/
 
+  // DELETE COMMENTS? ---------------------------------------
   if (pastTile != "nothing") {
     lastXPos = xyPos[0];
     lastYPos = xyPos[1];
@@ -119,6 +204,8 @@ export function coordHelper(xPos: number, yPos: number) {
   pastTile = tilemap[xPos][yPos].src;
   tilemap[xPos][yPos].src = playerImage[0];
   xyPos = [xPos, yPos];
+
+  //adjTiles = adjCoords(xPos, yPos);
 
   redrawTilemap();
   time++;
@@ -159,7 +246,7 @@ gridCanvas.onauxclick = (e) => {
           tilemap[coordX][coordY].src = imageUrls[0];
           cellData[coordX][coordY].plant = undefined;
           harvestTotal++;
-          if (harvestTotal == harvestWin) {
+          if (harvestTotal == 10) {
             console.log("You won!");
           }
         }
@@ -172,7 +259,7 @@ gridCanvas.onauxclick = (e) => {
 const textBox = document.createElement("input");
 textBox.type = "text";
 textBox.placeholder = "Enter your name";
-textBox.value = "left click to move, right click to sow/reap";
+textBox.value = "left click to move, right click to sow/reep";
 textBox.id = "nameInput";
 document.getElementsByTagName("body")[0].appendChild(textBox);
 
@@ -180,7 +267,7 @@ export let cellData: CellData[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
   let row = new Array(numTiles);
   for (let j = 0; j < numTiles; j++) {
-    row[j] = { sunLevel: 0, waterLevel: 0, cellTime: 0};
+    row[j] = { sunLevel: 0, waterLevel: 0 };
   }
   cellData[i] = row;
 }
@@ -192,8 +279,6 @@ function generateRandomLevels() {
       // Generate random levels (you can adjust the range based on your requirements)
       currCell.sunLevel = Math.floor(Math.random() * 100);
       currCell.waterLevel += Math.floor(Math.random() * 100);
-      currCell.cellTime += 1;
-
       if (currCell.plant != undefined) {
         currCell.plant?.advanceTime(currCell.sunLevel, currCell.waterLevel);
       }
@@ -207,7 +292,7 @@ function printGridData() {
   for (let i = 0; i < numTiles; i++) {
     let rowString = "";
     for (let j = 0; j < numTiles; j++) {
-      rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}, Time: ${cellData[i][j].cellTime}`;
+      rowString += `[${i},${j}] - Sun: ${cellData[i][j].sunLevel}, Water: ${cellData[i][j].waterLevel}`;
       if (cellData[i][j].plant != undefined) {
         rowString += `, Plant Type: ${cellData[i][j].plant!.type}, Growth Level: ${cellData[i][j].plant!.growth} |`;
       }
@@ -219,10 +304,9 @@ function printGridData() {
 
 function updateGridData() {
   generateRandomLevels();
-  generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
-  generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
-  generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
   printGridData();
+  // autosave = saveGrid();
+  // textBox.value = autosave;
 
   if (saveNum % 5 == 0) {
     saveGrid();
@@ -231,6 +315,24 @@ function updateGridData() {
 
   saveSlot(0);
 }
+
+// DELETE? -----------------------
+/* saveButton.addEventListener("click", () => {
+  undo();
+}); */
+//document.body.appendChild(saveButton);
+/*
+gridCanvas.addEventListener("click", (e) => {
+  const coordX = Math.trunc(e.offsetX / tileSize);
+  const coordY = Math.trunc(e.offsetY / tileSize);
+
+  coordHelper(coordX, coordY);
+
+  // Update grid data after the player moves
+  updateGridData();
+});
+*/
+// ---------------------------------------
 
 const undoStack: Memento[] = [];
 const redoStack: Memento[] = [];
@@ -451,16 +553,29 @@ if (localStorage.getItem("save0"))
   redrawTilemap(); 
 }
 
-if(reader != null && time == 0){
-
-  harvestWin = test.winCond;
-  coordHelper(test.playerPos[0], test.playerPos[1]);
-
-  console.log(harvestWin);
-}
-
+// let autosave: string = "";
 export let saveNum: number = 0;
 // uncomment this later, abe
 initGrid();
 // Call updateGridData initially to set initial levels
 updateGridData();
+
+/* Select Canvas Functions (currently unused) */
+// ----- Interacting with the selectable tilemap -----
+
+// Loop through the selectable tiles and draw textures in each cell
+function drawSelectCanvas() {
+  for (let i = 0; i < numSelectables; i++) {
+    const selectableImage = new Image();
+    selectableImage.src = imageUrls[i];
+    drawTexture(
+      0,
+      i,
+      selectCtx,
+      selectableImage,
+      selectCanvas.width,
+      selectHeight,
+      64
+    );
+  }
+}
