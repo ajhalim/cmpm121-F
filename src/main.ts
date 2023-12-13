@@ -3,8 +3,9 @@ import { Plant, PlantType } from "./plants";
 import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
 import { reader, generateEventLevels } from "./externalStuff";
+import data from "../languages.json" assert { type: "json" };
 
-reader();
+//reader();
 
 // Setting up the main canvas
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
@@ -46,6 +47,7 @@ const tileSize = gridCanvas.width / numTiles;
 let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
+let langu: string = "EN";
 
 export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
 export let time: number = 0;
@@ -55,7 +57,7 @@ const plantTypes: PlantType[] = ["species1", "species2", "species3"];
 let harvestTotal = 0;
 let harvestWin = 5;
 
-let test = reader();
+//let test = reader();
 
 // Creating the tilemap nested array
 let tilemap: HTMLImageElement[][] = new Array(numTiles);
@@ -219,9 +221,9 @@ function printGridData() {
 
 function updateGridData() {
   generateRandomLevels();
-  generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
-  generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
-  generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
+  //generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
+  //generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
+  //generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
   printGridData();
 
   if (saveNum % 5 == 0) {
@@ -250,6 +252,8 @@ const restore3 = document.getElementById("restoreFile3") as HTMLButtonElement;
 
 const clearSaves = document.getElementById("clearSaves") as HTMLButtonElement;
 const displayGrid = document.getElementById("displayGrid") as HTMLButtonElement;
+
+const language = document.getElementById("language") as HTMLButtonElement;
 
 undoButton.addEventListener("click", () => {
   undo();
@@ -293,6 +297,10 @@ clearSaves.addEventListener("click", () => {
 
 displayGrid.addEventListener("click", () => {
   console.log(localStorage.getItem("grid"));
+});
+
+language.addEventListener("click", () => {
+  translate();
 });
 
 // Function to undo the last action
@@ -442,6 +450,81 @@ gridCanvas.addEventListener("click", (e) => {
   updateGridData();
 });
 
+//Bellow is abe's nonsense
+//============================
+// Add event listener for the read code button
+const readCodeButton = document.getElementById("readCodeButton") as HTMLButtonElement;
+readCodeButton.addEventListener("click", () => {
+  readCode();
+});
+
+// Function to handle reading code from the file input
+function readCode() {
+  const inputElement = document.getElementById("input") as HTMLInputElement;
+  const fileList = inputElement.files;
+
+  if (fileList && fileList.length > 0) {
+    const file = fileList[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+      const code = event.target?.result as string;
+      const test = JSON.stringify(code);
+      console.log("Read code:", test);
+      // You can do anything with the code, Im just printing it in the console rn
+    };
+
+    if (file.type === "application/json") {
+      reader.readAsText(file);
+      
+      //reader.
+    } else {
+      // Display an error message to the user
+      console.error("Invalid file type. Please upload a valid HTML, JSON, or text file.");
+    }
+  }
+}
+
+function translate() {
+  if (langu == "AR") {
+    document.getElementById("language")!.innerHTML = data.AR.language;
+    document.getElementById("undoButton")!.innerHTML = data.AR.undoButton;
+    document.getElementById("redoButton")!.innerHTML = data.AR.redoButton;
+    document.getElementById("saveButton")!.innerHTML = data.AR.saveButton;
+    document.getElementById("saveFile1")!.innerHTML = data.AR.saveFile1;
+    document.getElementById("saveFile2")!.innerHTML = data.AR.saveFile2;
+    document.getElementById("saveFile3")!.innerHTML = data.AR.saveFile3;
+    document.getElementById("restoreFile1")!.innerHTML = data.AR.restoreFile1;
+    document.getElementById("restoreFile2")!.innerHTML = data.AR.restoreFile2;
+    document.getElementById("restoreFile3")!.innerHTML = data.AR.restoreFile3;
+    document.getElementById("clearSaves")!.innerHTML = data.AR.clearSaves;
+    document.getElementById("displayGrid")!.innerHTML = data.AR.displayGrid;
+    document.getElementById("readCodeButton")!.innerHTML =data.AR.readCodeButton;
+    console.log("EN")
+    langu = "EN";
+    return;
+  }else if(langu == "EN" ) {
+    document.getElementById("language")!.innerHTML = data.EN.language;
+    document.getElementById("undoButton")!.innerHTML = data.EN.undoButton;
+    document.getElementById("redoButton")!.innerHTML = data.EN.redoButton;
+    document.getElementById("saveButton")!.innerHTML = data.EN.saveButton;
+    document.getElementById("saveFile1")!.innerHTML = data.EN.saveFile1;
+    document.getElementById("saveFile2")!.innerHTML = data.EN.saveFile2;
+    document.getElementById("saveFile3")!.innerHTML = data.EN.saveFile3;
+    document.getElementById("restoreFile1")!.innerHTML = data.EN.restoreFile1;
+    document.getElementById("restoreFile2")!.innerHTML = data.EN.restoreFile2;
+    document.getElementById("restoreFile3")!.innerHTML = data.EN.restoreFile3;
+    document.getElementById("clearSaves")!.innerHTML = data.EN.clearSaves;
+    document.getElementById("displayGrid")!.innerHTML = data.EN.displayGrid;
+    document.getElementById("readCodeButton")!.innerHTML =data.EN.readCodeButton;
+    console.log("AR")
+    langu = "AR";
+    return;
+  }
+}
+//Above is abe's nonsense
+//============================
+
 
 console.log("Start")
 
@@ -453,8 +536,8 @@ if (localStorage.getItem("save0"))
 
 if(reader != null && time == 0){
 
-  harvestWin = test.winCond;
-  coordHelper(test.playerPos[0], test.playerPos[1]);
+  //harvestWin = test.winCond;
+  //coordHelper(test.playerPos[0], test.playerPos[1]);
 
   console.log(harvestWin);
 }

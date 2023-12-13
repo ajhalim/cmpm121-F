@@ -1,0 +1,35 @@
+{
+    "EN":{
+        "language": "EN",
+        "undoButton": "Undo",
+        "redoButton": "Redo",
+        "saveButton": "Save",
+        "saveFile1": "Save1",
+        "saveFile2": "Save2",
+        "saveFile3": "Save3",
+        "restoreFile1": "Restore1",
+        "restoreFile2": "Restore2",
+        "restoreFile3": "Restore3",
+        "clearSaves": "Clear Saves",
+        "displayGrid": "Print Grid",
+        "readCodeButton": "Read Code"
+    },
+
+    "AR":{
+        "language": "عَرَبِيّ",
+        "undoButton": "الغاء التحميل",
+        "redoButton": "إعادة",
+        "saveButton": "يحفظ",
+        "saveFile1": "الحفظ الأول",
+        "saveFile2": "الحفظ الثاني",
+        "saveFile3": "الحفظ الثالث",
+        "restoreFile1": "تحميل أولا",
+        "restoreFile2": "تحميل الثانية",
+        "restoreFile3": "تحميل الثالث",
+        "clearSaves": "يحفظ واضح",
+        "displayGrid": "شبكة الطباعة",
+        "readCodeButton": "قراءة الكود"
+    }
+
+
+}

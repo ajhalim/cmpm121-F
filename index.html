@@ -8,6 +8,7 @@
   <body>
     <div id="app"></div>
     <canvas id="gridCanvas" width ="512" height ="512"></canvas>
+    <button id="language">EN</button>
     <button id="undoButton">Undo</button>
     <button id="redoButton">Redo</button>
     <button id="saveButton">Save</button>
@@ -19,7 +20,9 @@
     <button id="restoreFile3">Restore3</button>
     <button id="clearSaves">Clear Saves</button>
     <button id="displayGrid">Print Grid</button>
-    <input type="file" id="input" user />
+    <input type="file" id="input" accept=".html, .json, .txt" />
+    <button id="readCodeButton">Read Code</button>
+    
 
     <script type="module" src="/src/main.ts"></script>
   </body>
