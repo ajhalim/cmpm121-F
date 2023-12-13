@@ -3,9 +3,7 @@ import "./style.css";
 import { Plant } from "./plants";
 import { Memory } from "./memory"; // Import the Memory class [F1.a]
 import { UndoRedo } from "./undoRedo"; // Import the UndoRedo class [F1.b]
-import { Memento, SaveFile } from "./Memento"; // Import Mementos and SaveFiles [F1.b & F1.c]
-// import { SaveGame } from "./saveGame"; // Import the SaveGame class [F1.c]
-import { AutoSave } from "./autoSave"; // Import the AutoSave class [F1.d]
+import { SaveGame } from "./saveGame"; // Import the SaveGame class [F1.c & F1.d]
 
 /* GRAPHICS -------------------- */
 // Setting up the multiple canvases
@@ -23,6 +21,30 @@ const imageUrls = [
     "/tile7.png",
     "/tile8.png"
 ];
+
+const roseUrls = [
+    "/rose1.png",
+    "/rose2.png",
+    "/rose3.png",
+]
+
+const whiteUrls = [
+    "/white1.PNG",
+    "/white2.PNG",
+    "/white3.PNG",
+]
+
+const yellowUrls = [
+    "/yellow1.png",
+    "/yellow2.png",
+    "/yellow3.png",
+]
+
+const plantUrls = [
+    roseUrls,
+    whiteUrls, 
+    yellowUrls
+]
 
 // Setting up images for background and player
 const backgroundImage = new Image();
@@ -102,16 +124,11 @@ export interface Cell {
 let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
+let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
+let time: number = 0;
+let harvestTotal = 0;
 
-export let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
-export let time: number = 0;
-export let harvestTotal = 0;
-
-// Can change the names of the types later //
-const plantTypes = ["species1", "species2", "species3"];
-const undoStack: Memento[] = [];
-const redoStack: Memento[] = [];
-const saveFiles: SaveFile[] = [];
+const plantTypes = ["rose", "white", "yellow"];
 
 // Initialize the cellData array
 let cellData: CellData[][] = new Array(numTiles);
@@ -128,17 +145,17 @@ let cells: Cell[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
     let row = new Array(numTiles);
     for (let j = 0; j < numTiles; j++) {
-        row[j] = {weather: cellData[i][j], plant: new Plant("none", 0, 0)};
+        row[j] = {weather: cellData[i][j], plant: new Plant("none", 0, 0, [i, j])};
     }
     cells[i] = row;
 }
 
-export function coordHelper(xPos: number, yPos: number) {
-    /* helper function that makes sure to reset the tile that the player moves from to the img
-    it was before the player moved onto it.*/
+/* helper function that makes sure to reset the tile that the player moves from to the img
+    it was before the player moved onto it, and then to assign the player img to the new tile.*/
+function coordHelper(xPos: number, yPos: number) {
     console.log("Player moved to:", `[${xPos},${yPos}]`);
 
-    if(pastTile != "nothing"){
+    if (pastTile != "nothing") {
         lastXPos = xyPos[0];
         lastYPos = xyPos[1];
         tilemap[lastXPos][lastYPos].src = pastTile;
@@ -152,19 +169,19 @@ export function coordHelper(xPos: number, yPos: number) {
     return xyPos;
 }
 
+/* Helper function to test if given coordinate is adjacent to the player */
 function isAdjacent(xPos: number, yPos: number) {
-    /* Helper function to test if given coordinate is adjacent to the player */
     return ((xPos >= (xyPos[0]-1) && xPos <=(xyPos[0]+1)) && (yPos >= (xyPos[1]-1) && yPos <=(xyPos[1]+1)));
 }
 
 function sow(xPos: number, yPos: number) {
-    cells[xPos][yPos].plant!.type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
+    const plantType = plantTypes[Math.floor(Math.random() * plantTypes.length)];
+    cells[xPos][yPos].plant!.type = plantType;
     cells[xPos][yPos].plant!.growth = 1;
     cells[xPos][yPos].plant!.water = 0;
-    const plantType = plantTypes.indexOf(cells[xPos][yPos].plant!.type);
-    tilemap[xPos][yPos].src = imageUrls[plantType+1];
+    tilemap[xPos][yPos].src = plantUrls[plantTypes.indexOf(cells[xPos][yPos].plant!.type)][cells[xPos][yPos].plant!.growth-1];
     console.log("planted a " + cells[xPos][yPos].plant!.type);
-    // saveStateToUndoStack();
+    UndoRedo.saveStateToUndoStack(cells, cellData, tilemap, xyPos, time, harvestTotal);
 }
 
 function reap(xPos: number, yPos: number) {
@@ -175,7 +192,7 @@ function reap(xPos: number, yPos: number) {
     if (harvestTotal==10) {
         console.log("You won!");
     }
-    // saveStateToUndoStack();
+    UndoRedo.saveStateToUndoStack(cells, cellData, tilemap, xyPos, time, harvestTotal);
 }
 
 function printGridData() {
@@ -194,243 +211,44 @@ function printGridData() {
     }
 }
 
+// Generate random levels (you can adjust the range based on your requirements)
 function generateRandomLevels() {
     for (let i = 0; i < numTiles; i++) {
       for (let j = 0; j < numTiles; j++) {
         const currCell = cells[i][j];
-        // Generate random levels (you can adjust the range based on your requirements)
+        
         currCell.weather.sunLevel = Math.floor(Math.random() * 100);
         currCell.weather.waterLevel += Math.floor(Math.random() * 100);
         currCell.plant.advanceTime(currCell.weather.sunLevel, currCell.weather.waterLevel);
+        if (currCell.plant.type != "none") {
+            tilemap[i][j].src = plantUrls[plantTypes.indexOf(currCell.plant!.type)][currCell.plant!.growth-1];
+        }
       }
     }
   }
 
-// Update the event listeners
+// Update the grid data
 function updateGridData() {
     generateRandomLevels();
     printGridData();
     redrawTilemap();
     
-    saveSlot(0);
+    SaveGame.saveSlot(0, cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile);
     // AutoSave.saveAuto(cellData); // Save the updated state to the auto-save
     Memory.saveState(cellData); // Save the current state to the memory
     UndoRedo.saveMemoryState(); // Update undo/redo history
 }
 
-// Function to undo the last action
-function undo() {
-    const prevState = undoStack.pop();
-  
-    if (!prevState) {
-      console.error("Undo stack is empty");
-      return;
-    }
-  
-    console.log("Undoing last action...");
-  
-    // Save the current state before undoing
-    saveStateToRedoStack();
-  
-    // Restore the previous state
-    restoreState(prevState);
-  
-    console.log("Undone. Current state:");
-    printGridData();
-}
-  
-// Function to redo the last undone action
-function redo() {
-    const nextState = redoStack.pop();
-
-    if (!nextState) {
-        console.error("Redo stack is empty");
-        return;
-    }
-
-    console.log("Redoing last undone action...");
-
-    // Save the current state before redoing
-    saveStateToUndoStack();
-
-    // Restore the next state
-    restoreState(nextState);
-
-    console.log("Redone. Current state:");
-    printGridData();
-}
-  
-// Helper function to save the current state to the undo stack
-function saveStateToUndoStack() {
-    undoStack.push(new Memento(
-        tilemap.map((row) =>
-            row.map((cell) => {
-            const img = new Image();
-            img.src = cell.src;
-            return img;
-            })
-        ),
-        cells.map((row) => row.map((cell) => ({ ...cell }))),
-        cellData.map((row) => row.map((cell) => ({ ...cell}))),
-        xyPos.slice(),
-        time
-    ));
-}
-  
-// Helper function to save the current state to the redo stack
-function saveStateToRedoStack() {
-    redoStack.push(new Memento(
-        tilemap.map((row) =>
-            row.map((cell) => {
-            const img = new Image();
-            img.src = cell.src;
-            return img;
-            })
-        ),
-        cells.map((row) => row.map((cell) => ({ ...cell }))),
-        cellData.map((row) => row.map((cell) => ({ ...cell}))),
-        xyPos.slice(),
-        time
-    ));
-}
-  
-// Helper function to restore a state
-function restoreState(state: Memento) {
-    tilemap = state.tilemap.map((row) =>
-    row.map((cell) => {
-        const img = new Image();
-        img.src = cell.src;
-        return img;
-    })
-    );
-    cellData = state.cellData.map((row) =>
-    row.map((cell) => ({ ...cell }))
-    );
-    cells = state.cells.map((row) =>
-    row.map((cell) => ({ ...cell }))
-    );
-    xyPos = state.xyPos.slice();
-    time = state.time;
-    for (let i = 0; i < numTiles; i++) {
-        for (let j = 0; j < numTiles; j++) {
-            cells[i][j].weather = cellData[i][j];
-        }
-    }
-
-    // Redraw the tilemap
-    redrawTilemap();
-}
-
-// Function to save a specific grid state to localStorage
-function saveSlot(slot: number) {
-    saveFiles[slot] = (new SaveFile(
-        tilemap.map((row) =>
-        row.map((cell) => {
-            return cell.src;
-        })
-        ),
-        cells.map((row) => row.map((cell) => ({ ...cell }))),
-        cellData.map((row) => row.map((cell) => ({ ...cell }))),
-        xyPos.slice(),
-        time,
-        pastTile = pastTile,
-    ));
-    localStorage.setItem("save" + slot, JSON.stringify(saveFiles[slot]));
-    console.log("Saved to slot" + slot + ".");
-}
-
-// Function to restore a saved grid state from localStorage
-function restoreSave(slot: number) {
-    const savedState = JSON.parse(localStorage.getItem("save" + slot)!);
-    tilemap = savedState.tilemap.map((row: any[]) =>
-        row.map((cell) => {
-        const img = new Image();
-        img.src = cell;
-        return img;
-        })
-    );
-    cellData = savedState.cellData.map((row: any[]) =>
-        row.map((cell) => ({ ...cell }))
-    );
-    cells = savedState.cells.map((row: any[]) =>
-    row.map((cell) => ({ ...cell }))
-    );
-    xyPos = savedState.xyPos.slice();
-    time = savedState.time;
-    pastTile = savedState.pastTile;
-    for (let i = 0; i < numTiles; i++) {
-        for (let j = 0; j < numTiles; j++) {
-            cells[i][j].weather = cellData[i][j];
-            const {type, growth, water} = cells[i][j].plant;
-            cells[i][j].plant = new Plant(type, growth, water); 
-        }
-    }
-
-    // Redraw the tilemap
-    redrawTilemap();
-    console.log("Restored from slot" + slot + ".");
-}
-
-// // Manual save functionality
-// function manualSave(slotNumber: number) {
-//     try {
-//         // Save the game to the specified slot using the SaveGame class
-//         SaveGame.saveGame(cellData.map(row => row.map(cell => ({ ...cell }))), slotNumber - 1);
-//         console.log(`Game saved to slot ${slotNumber} manually!`);
-//     } catch (error) {
-//         console.error(`Failed to save game to slot ${slotNumber}:`, error);
-//     }
-// }
-
-// // Manual load functionality
-// function manualLoad(slotNumber: number) {
-//     try {
-//         // Load the game state from the specified slot using the SaveGame class
-//         const loadedState = SaveGame.loadGame(slotNumber - 1);
-
-//         if (loadedState !== null) {
-//             // Update the current cellData with the loaded state
-//             cellData = loadedState;
-
-//             // Redraw the tilemap to reflect the changes
-//             redrawTilemap();
-
-//             console.log(`Game loaded from slot ${slotNumber} manually!`);
-//         } else {
-//             console.error(`No saved game found in slot ${slotNumber}.`);
-//         }
-//     } catch (error) {
-//         console.error(`Failed to load game from slot ${slotNumber}:`, error);
-//     }
-// }
-
 // Function that loads auto-save
 function loadAutoSave() {
     try {
         // Load the auto-save state using the AutoSave class
-        // const autoSavedState = AutoSave.loadAuto();
-        restoreSave(0);
+        ({cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile} = SaveGame.restoreSave(0, cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile));
+        Memory.saveState(cellData); // Save the current state to the memory
+        UndoRedo.saveMemoryState(); // Update undo/redo history
         redrawTilemap();
+        printGridData();
         console.log("Auto-save loaded successfully.");
-
-    //     if (autoSavedState !== null) {
-    //         // Check if the loaded state matches the current state
-    //         const isMatch = compareStates(autoSavedState, cellData);
-
-    //         if (isMatch) {
-    //             // Update the current cellData with the loaded state
-    //             cellData = autoSavedState;
-
-    //             // Redraw the tilemap to reflect the changes
-    //             redrawTilemap();
-
-    //             console.log("Auto-save loaded successfully.");
-    //         } else {
-    //             console.log("Auto-save does not match the current state. Ignoring...");
-    //         }
-    //     } else {
-    //         console.log("No auto-save found.");
-    //     }
     } catch (error) {
         console.error("Failed to load auto-save:", error);
     }
@@ -438,16 +256,10 @@ function loadAutoSave() {
 
 // Helper function for the Auto save
 function checkAutoSaveOnLaunch() {
-    // Rest of the function remains unchanged
-    // const autoSavedState = AutoSave.loadAuto();
-    // if (autoSavedState !== null) {
     if (localStorage.getItem("save0")) {
         const continueGame = confirm("Would you like to continue where you left off?");
         if (continueGame) {
-            // cellData = autoSavedState;
-            restoreSave(0);
-            redrawTilemap();
-            printGridData();
+            loadAutoSave();
             console.log("Auto-save loaded.");
         } else {
             console.log("Auto-save exists, but the player chose not to continue.");
@@ -459,89 +271,46 @@ function checkAutoSaveOnLaunch() {
     }
 }
 
-// Helper function to compare two states
-// function compareStates(state1: CellData[][], state2: CellData[][]): boolean {
-//     for (let i = 0; i < state1.length; i++) {
-//         for (let j = 0; j < state1[i].length; j++) {
-//             const cell1 = state1[i][j];
-//             const cell2 = state2[i][j];
-
-//             if (
-//                 cell1.sunLevel !== cell2.sunLevel ||
-//                 cell1.waterLevel !== cell2.waterLevel
-//             ) {
-//                 return false;
-//             }
-//         }
-//     }
-
-//     return true;
-// }
-
-// // Helper function to compare two plant objects
-// function comparePlants(plant1: Plant | undefined, plant2: Plant | undefined): boolean {
-//     if (!plant1 && !plant2) {
-//         return true;
-//     }
-
-//     if (!plant1 || !plant2) {
-//         return false;
-//     }
-
-//     return (
-//         plant1.type === plant2.type &&
-//         plant1.growth === plant2.growth
-//     );
-// }
-
 /* Editing to directly reference the buttons already created on the grid! */
 // Buttons for Save and Load
 for (let i = 1; i <= 3; i++) {
     const saveButton = document.getElementById("save-"+i)!;
     saveButton.addEventListener("click", () => {
-        saveSlot(i);
-        // checkSaveAndLoad();
+        SaveGame.saveSlot(i, cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile);
     });
 
     const loadButton = document.getElementById("load-"+i)!;
     loadButton.addEventListener("click", () => {
-        restoreSave(i);
-        // checkSaveAndLoad();
+        ({cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile} = SaveGame.restoreSave(i, cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile));
+        redrawTilemap();
     });
 }
 
 // Button for the auto-save load
 const autoSaveButton = document.getElementById("load-auto")!;
-if (autoSaveButton) {
-    autoSaveButton.addEventListener("click", loadAutoSave);
-
-    autoSaveButton.addEventListener("click", () => {
-        const autoSavedState = AutoSave.loadAuto();
-        if (autoSavedState !== null) {
-            cellData = autoSavedState;
-            redrawTilemap();
-            console.log("Auto-save loaded.");
-        } else {
-            console.log("No auto-save found.");
-        }
-        // checkSaveAndLoad();
-    });
-}
+autoSaveButton.addEventListener("click", loadAutoSave);
 
 const clearSavesButton = document.getElementById("clear-saves")!;
 clearSavesButton.addEventListener("click", () => {
     localStorage.clear();
+    UndoRedo.clearHistory();
     console.log("Saves cleared!");
 });
 
 const undoButton = document.getElementById("undo")!;
 undoButton.addEventListener("click", () => {
-    undo();
+    ({cells, cellData, tilemap, xyPos, time, harvestTotal} = UndoRedo.undo(cells, cellData, tilemap, xyPos, time, harvestTotal)!);
+    UndoRedo.undoMemory();
+    redrawTilemap();
+    printGridData();
 });
 
 const redoButton = document.getElementById("redo")!;
 redoButton.addEventListener("click", () => {
-    redo();
+    ({cells, cellData, tilemap, xyPos, time, harvestTotal} = UndoRedo.redo(cells, cellData, tilemap, xyPos, time, harvestTotal)!);
+    UndoRedo.redoMemory();
+    redrawTilemap();
+    printGridData();
 });
 
 // remove the context menu
@@ -566,7 +335,7 @@ gridCanvas.onauxclick = (e) => {
 };
 
 gridCanvas.addEventListener("click", (e) => {
-    saveStateToUndoStack(); // Record movement
+    UndoRedo.saveStateToUndoStack(cells, cellData, tilemap, xyPos, time, harvestTotal); // Record movement
 
     const coordX = Math.trunc(e.offsetX / tileSize);
     const coordY = Math.trunc(e.offsetY / tileSize);

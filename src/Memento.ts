@@ -8,7 +8,8 @@ export class Memento {
         public cells: Cell[][], // Represents the game grid cell info
         public cellData: CellData[][],
         public xyPos: number[], // Represents the player's current position [x, y]
-        public time: number // Represents the current game time
+        public time: number, // Represents the current game time
+        public harvestTotal: number, // Represents the total number of plants harvested
     ) {}
 }
 
@@ -21,6 +22,7 @@ export class SaveFile {
         public cellData: CellData[][],
         public xyPos: number[], // Represents the player's current position [x, y]
         public time: number, // Represents the current game time
+        public harvestTotal: number, // Represents the total number of plants harvested
         public pastTile: string, // Represents the past tile information for the player
     ) {}
 }
