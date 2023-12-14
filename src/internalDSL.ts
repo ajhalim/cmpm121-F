@@ -3,73 +3,80 @@
 
 // Internal DSL -----------------
 
+// Defines the state of the soil
 interface SoilState {
   SunLevel: number;
   WaterLevel: number;
 }
 
+// Represents a plant
+interface Plant {
+  type: string;
+  level: number;  //plant stages
+  isAlive: boolean;
+}
+
+// Describes the details of a cell, which may or may not contain a plant
 interface CellDetails {
   soilState: SoilState;
   plant?: Plant;
 }
 
-interface Plant {
-  type: string;
-  level: number;
-  isAlive: boolean;
-}
-
-interface PlantDefinitionLanguage {
-  name(name: string): void;
-  growthCheckFrequency(frequency: number): void;
-  growsWhen(growsWhen: (context: GrowthContext) => boolean): void;
-}
-
+// Represents the context for plant growth, providing information about the plant,
+// the current cell, and its neighbor cells
 interface GrowthContext {
   plant: Plant;
   cell: CellDetails;
   neighborCells: CellDetails[];
 }
 
-class InternalPlantType {
-  fullName: string = "plant";
-  growthCheckFrequency: number = 1;
-  nextLevel: (context: GrowthContext) => number = (ctx) => ctx.plant.level;
+class PlantDSL {
+  private plant: Plant;
+
+  constructor(type: string) {
+    this.plant = {
+      type,
+      level: 1,
+      isAlive: true,
+    };
+  }
+
+  checkSameSpeciesNeighbors() {
+    return (context: GrowthContext) => {
+      const checkSameSpeciesNeighbors = context.neighborCells.filter(
+        (neighbor) => neighbor.plant?.type === this.plant.type
+      );
+      
+      // Logic implementation for same species neighbors
+      // This Updates plant levvel based on the number of same species neighbors
+      this.plant.level += checkSameSpeciesNeighbors.length;
+    }
+  }
+
+  checkSoilConditions(minSunLevel: number, minWaterLevel: number) {
+    return (context: GrowthContext) => {
+      const { SunLevel, WaterLevel } = context.cell.soilState;
+
+      if (SunLevel >= minSunLevel && WaterLevel >= minWaterLevel) {
+        // Logic implementation for meeting soil conditions
+        // This update plant level or other growth-related properties
+        this.plant.level++;
+      } else {
+        this.plant.isAlive = false;
+      }
+    };
+  }
+
+  // Get the resulting plant after appying growth conditions
+  getResultingPlant() : Plant {
+    return this.plant;
+  }
 }
 
-function internalPlantTypeCompiler(program: (dsl: PlantDefinitionLanguage) => void): InternalPlantType {
-  const internalPlantType = new InternalPlantType();
-  const dsl: PlantDefinitionLanguage = {
-    name(name: string): void {
-      internalPlantType.fullName = name;
-    },
-    growthCheckFrequency(frequency: number): void {
-      internalPlantType.growthCheckFrequency = frequency;
-    },
-    growsWhen(growsWhen: (context: GrowthContext) => boolean): void {
-      internalPlantType.nextLevel = (ctx) => {
-        return ctx.plant.level + (growsWhen(ctx) ? 1 : 0);
-      };
-    },
-  };
-  program(dsl);
-  return internalPlantType;
-}
+// Example usage of the DSL
+const myPlant = new PlantDSL('Rose')
+  .checkSameSpeciesNeighbors()
+  .checkSoilConditions(5, 3)
+  .getResultingPlant();
 
-// Where we will create the different plant types
-const allInternalPlantTypes = [
-  internalPlantTypeCompiler($ => {
-    $.name("species1");
-    $.growthCheckFrequency(2);
-    $.growsWhen(({ plant, cell, neighborCells}) => {
-      const neighborPlants = neighborCells
-        .map(neighborCells => neighborCells.plant)
-        .filter(plant => plant !== undefined) as Plant[];
-      const isHappy = neighborPlants
-        .filter(neighbor => neighbor.type === plant.type)
-        .filter(neighbor => neighbor.level === Math.min(1, plant.level - 1))
-        .length >= 2;
-      return isHappy && cell.soilState.WaterLevel > 0.5 && cell.soilState.SunLevel > 0.5;
-    });
-  }),
-]
+console.log(myPlant);
