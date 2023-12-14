@@ -4,11 +4,15 @@ import { Plant } from "./plants";
 import { Memory } from "./memory"; // Import the Memory class [F1.a]
 import { UndoRedo } from "./undoRedo"; // Import the UndoRedo class [F1.b]
 import { SaveGame } from "./saveGame"; // Import the SaveGame class [F1.c & F1.d]
+import { reader, generateEventLevels } from "./externalStuff";
+import data from "../languages.json" assert { type: "json" };
 
 /* GRAPHICS -------------------- */
 // Setting up the multiple canvases
 const gridCanvas = document.getElementById("gridCanvas") as HTMLCanvasElement;
 const gridCtx = gridCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+let langu: string = "EN";
 
 // Defining the textures used
 const imageUrls = [
@@ -45,6 +49,9 @@ const plantUrls = [
     whiteUrls, 
     yellowUrls
 ]
+
+reader();
+let test = reader();
 
 // Setting up images for background and player
 const backgroundImage = new Image();
@@ -125,7 +132,7 @@ let lastXPos: number;
 let lastYPos: number;
 let pastTile: string = "nothing";
 let xyPos: number[] = [0, 0]; // Initialize xyPos with default values
-let time: number = 0;
+export let time: number = 0;
 let harvestTotal = 0;
 
 const plantTypes = ["rose", "white", "yellow"];
@@ -141,7 +148,7 @@ for (let i = 0; i < numTiles; i++) {
 }
 
 // Initialize the array of cells
-let cells: Cell[][] = new Array(numTiles);
+export let cells: Cell[][] = new Array(numTiles);
 for (let i = 0; i < numTiles; i++) {
     let row = new Array(numTiles);
     for (let j = 0; j < numTiles; j++) {
@@ -230,6 +237,9 @@ function generateRandomLevels() {
 // Update the grid data
 function updateGridData() {
     generateRandomLevels();
+    generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
+  generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
+  generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
     printGridData();
     redrawTilemap();
     
@@ -287,7 +297,7 @@ for (let i = 1; i <= 3; i++) {
 }
 
 // Button for the auto-save load
-const autoSaveButton = document.getElementById("load-auto")!;
+const autoSaveButton = document.getElementById("loadAuto")!;
 autoSaveButton.addEventListener("click", loadAutoSave);
 
 const clearSavesButton = document.getElementById("clear-saves")!;
@@ -345,6 +355,74 @@ gridCanvas.addEventListener("click", (e) => {
     updateGridData(); // Update grid data after the player moves
 });
 
+const language = document.getElementById("language") as HTMLButtonElement;
+language.addEventListener("click", () => {
+  translate(langu);
+  if(langu == "AR"){
+    langu = "EN";
+  }
+  else if(langu == "EN"){
+    langu = "ZH";
+  }
+  else if(langu == "ZH"){
+    langu = "AR";
+  }
+});
+
+export function translate(langu: string) {
+  if (langu == "AR") {
+    document.getElementById("language")!.innerHTML = data.AR.language;
+    document.getElementById("undo")!.innerHTML = data.AR.undoButton;
+    document.getElementById("redo")!.innerHTML = data.AR.redoButton;
+    //document.getElementById("saveButton")!.innerHTML = data.AR.saveButton;
+    document.getElementById("save-1")!.innerHTML = data.AR.saveFile1;
+    document.getElementById("save-2")!.innerHTML = data.AR.saveFile2;
+    document.getElementById("save-3")!.innerHTML = data.AR.saveFile3;
+    document.getElementById("load-1")!.innerHTML = data.AR.restoreFile1;
+    document.getElementById("load-2")!.innerHTML = data.AR.restoreFile2;
+    document.getElementById("load-3")!.innerHTML = data.AR.restoreFile3;
+    document.getElementById("clear-saves")!.innerHTML = data.AR.clearSaves;
+    document.getElementById("loadAuto")!.innerHTML = data.AR.loadAuto;
+    //document.getElementById("readCodeButton")!.innerHTML =data.AR.readCodeButton;
+    console.log("AR");
+    //langu = "EN";
+    return;
+  }else if(langu == "EN" ) {
+    document.getElementById("language")!.innerHTML = data.EN.language;
+    document.getElementById("undo")!.innerHTML = data.EN.undoButton;
+    document.getElementById("redo")!.innerHTML = data.EN.redoButton;
+    //document.getElementById("saveButton")!.innerHTML = data.EN.saveButton;
+    document.getElementById("save-1")!.innerHTML = data.EN.saveFile1;
+    document.getElementById("save-2")!.innerHTML = data.EN.saveFile2;
+    document.getElementById("save-3")!.innerHTML = data.EN.saveFile3;
+    document.getElementById("load-1")!.innerHTML = data.EN.restoreFile1;
+    document.getElementById("load-2")!.innerHTML = data.EN.restoreFile2;
+    document.getElementById("load-3")!.innerHTML = data.EN.restoreFile3;
+    document.getElementById("clear-saves")!.innerHTML = data.EN.clearSaves;
+    document.getElementById("loadAuto")!.innerHTML = data.EN.loadAuto;
+    //document.getElementById("readCodeButton")!.innerHTML =data.EN.readCodeButton;
+    console.log("EN");
+    //langu = "AR";
+    return;
+  }else if(langu == "ZH" ) {
+    document.getElementById("language")!.innerHTML = data.ZH.language;
+    document.getElementById("undo")!.innerHTML = data.ZH.undoButton;
+    document.getElementById("redo")!.innerHTML = data.ZH.redoButton;
+    //document.getElementById("saveButton")!.innerHTML = data.ZH.saveButton;
+    document.getElementById("save-1")!.innerHTML = data.ZH.saveFile1;
+    document.getElementById("save-2")!.innerHTML = data.ZH.saveFile2;
+    document.getElementById("save-3")!.innerHTML = data.ZH.saveFile3;
+    document.getElementById("load-1")!.innerHTML = data.ZH.restoreFile1;
+    document.getElementById("load-2")!.innerHTML = data.ZH.restoreFile2;
+    document.getElementById("load-3")!.innerHTML = data.ZH.restoreFile3;
+    document.getElementById("clear-saves")!.innerHTML = data.ZH.clearSaves;
+    document.getElementById("loadAuto")!.innerHTML = data.ZH.loadAuto;
+    //document.getElementById("readCodeButton")!.innerHTML =data.ZH.readCodeButton;
+    console.log("ZH");
+    //langu = "AR";
+    return;
+  }
+}
 // START --------------------
 // Call checkAutoSaveOnLaunch after cellData is initialized
 checkAutoSaveOnLaunch();

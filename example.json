@@ -1,0 +1,25 @@
+{
+    "Scenario": {
+      "winCondition": 10,
+      "playerPos": [0, 0],
+  
+      "event1": {
+        "name": "drought",
+        "when": 1,
+        "waterLevel": 0,
+        "sunLevel": 100
+      },
+      "event2": {
+        "name": "flood",
+        "when": 2,
+        "waterLevel": 100,
+        "sunLevel": 0
+      },
+      "event3": {
+        "name": "nightmare",
+        "when": 3,
+        "waterLevel": 100,
+        "sunLevel": 100
+      }
+    }
+  }

@@ -1,0 +1,49 @@
+{
+"EN":{
+    "language": "EN",
+    "undoButton": "Undo",
+    "redoButton": "Redo",
+    "saveButton": "save",
+    "saveFile1": "Save 1",
+    "saveFile2": "Save 2",
+    "saveFile3": "Save 3",
+    "restoreFile1": "Load 1",
+    "restoreFile2": "Load 2",
+    "restoreFile3": "Load 3",
+    "clearSaves": "Clear Saves",
+    "loadAuto": "Load Auto",
+    "readCodeButton": "Read Code"
+    
+},
+"AR":{
+    "language": "عَرَبِيّ",
+    "undoButton": "الغاء التحميل",
+    "redoButton": "إعادة",
+    "saveButton": "يحفظ",
+    "saveFile1": "الحفظ الأول",
+    "saveFile2": "الحفظ الثاني",
+    "saveFile3": "الحفظ الثالث",
+    "restoreFile1": "تحميل أولا",
+    "restoreFile2": "تحميل الثانية",
+    "restoreFile3": "تحميل الثالث",
+    "clearSaves": "يحفظ واضح",
+    "loadAuto": "شبكة الطباعة",
+    "readCodeButton": "قراءة الكود"
+},
+
+"ZH":{
+    "language": "中文",
+    "undoButton": "撤銷",
+    "redoButton": "重做",
+    "saveButton": "保存存檔",
+    "saveFile1": "保存存檔一",
+    "saveFile2": "保存存檔二",
+    "saveFile3": "保存存檔三",
+    "restoreFile1": "載入文件一",
+    "restoreFile2": "載入文件二",
+    "restoreFile3": "載入文件三",
+    "clearSaves": "清除文件",
+    "loadAuto": "載入自動",
+    "readCodeButton": "Read Code"
+}
+}
