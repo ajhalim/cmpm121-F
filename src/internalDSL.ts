@@ -30,6 +30,7 @@ interface GrowthContext {
   neighborCells: CellDetails[];
 }
 
+// Define the DSL functions for plant types and growth conditions
 class PlantDSL {
   private plant: Plant;
 
@@ -41,34 +42,44 @@ class PlantDSL {
     };
   }
 
-  checkSameSpeciesNeighbors() {
-    return (context: GrowthContext) => {
-      const checkSameSpeciesNeighbors = context.neighborCells.filter(
+  // DSL function for checking neighbors of the same species
+  checkSameSpeciesNeighbors(): PlantDSL {
+    const logic = (context: GrowthContext) => {
+      const sameSpeciesNeighbors = context.neighborCells.filter(
         (neighbor) => neighbor.plant?.type === this.plant.type
       );
-      
-      // Logic implementation for same species neighbors
-      // This Updates plant levvel based on the number of same species neighbors
-      this.plant.level += checkSameSpeciesNeighbors.length;
-    }
+
+      // Logic implementaion for same species neighbors
+      // This update plant level based on the number of same species neighbors
+      this.plant.level += sameSpeciesNeighbors.length;
+    };
+
+    logic({} as GrowthContext); // Execute the logic immediately
+
+    return this;
   }
 
-  checkSoilConditions(minSunLevel: number, minWaterLevel: number) {
-    return (context: GrowthContext) => {
+  // DSL function for checking soil conditions (sun and water level)
+  checkSoilConditions(minSunLevel: number, minWaterLevel: number): PlantDSL {
+    const logic = (context: GrowthContext) => {
       const { SunLevel, WaterLevel } = context.cell.soilState;
 
       if (SunLevel >= minSunLevel && WaterLevel >= minWaterLevel) {
-        // Logic implementation for meeting soil conditions
+        // Logic implementaion for meeting soil conditions
         // This update plant level or other growth-related properties
         this.plant.level++;
       } else {
         this.plant.isAlive = false;
       }
     };
+
+    logic({} as GrowthContext); // Execute the logic immediately
+
+    return this;
   }
 
-  // Get the resulting plant after appying growth conditions
-  getResultingPlant() : Plant {
+  // Get the resulting plant after applying growth conditions
+  getResultingPlant(): Plant {
     return this.plant;
   }
 }
