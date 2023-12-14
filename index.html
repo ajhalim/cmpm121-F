@@ -53,6 +53,15 @@
     background: transparent; /* Make the container clear */
   }
 
+  #plantGameText {
+    position: fixed;
+    bottom: 34%;
+    right: 50px;
+    color: wheat;
+    font-size: 40px;
+    transform: translateY(50%);
+  }
+
   button {
     width: 200px;
     height: 80px;
@@ -89,6 +98,17 @@
     <button id="undo" style="bottom: -320px; left: -480px;">Undo</button>
     <button id="redo" style="bottom: -320px; left: -220px;">Redo</button>
 
+    <!-- File input button that can read it -->
+    <input type="file" id="input" accept=".html, .json, .txt" style="position: fixed; bottom: 560px; left: 1230px;" />
+    <button id="readCodeButton" style="bottom: 20px; left: 640px">Read Code</button>
+
+    <!-- On-screen displays for sun level and water level -->
+    <div id="sunLevel" style="position: fixed; bottom: 75px; left: 1000px; color: wheat; font-size: 24px;">Sun: <span id="sunLevel">0</span></div>
+    <div id="waterLevel" style="position: fixed; bottom: 75px; left: 1250px; color: wheat; font-size: 24px;">Water: <span id="waterLevel">0</span></div>
+    
+    <!-- Plant Game text box -->
+    <div id="plantGameText">Rat Plant Game</div>
+    
   </div>
   <canvas id="gridCanvas" width="512" height="512"></canvas>
   <canvas id="selectCanvas" width="" height="512"></canvas>
