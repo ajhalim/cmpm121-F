@@ -85,9 +85,13 @@ class PlantDSL {
 }
 
 // Example usage of the DSL
+/*
 const myPlant = new PlantDSL('Rose')
   .checkSameSpeciesNeighbors()
   .checkSoilConditions(5, 3)
   .getResultingPlant();
 
 console.log(myPlant);
+*/
+
+export {PlantDSL};
