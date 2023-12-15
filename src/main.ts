@@ -6,6 +6,7 @@ import { UndoRedo } from "./undoRedo"; // Import the UndoRedo class [F1.b]
 import { SaveGame } from "./saveGame"; // Import the SaveGame class [F1.c & F1.d]
 import { reader, generateEventLevels } from "./externalStuff";
 import data from "../languages.json" assert { type: "json" };
+import { PlantDSL } from "./internalDSL";
 
 /* GRAPHICS -------------------- */
 // Setting up the multiple canvases
@@ -435,3 +436,11 @@ Memory.saveState(cellData);
 
 // Finish game trying this again
 //aaaaaa
+
+// Example usage in main.ts
+const myPlant = new PlantDSL('Rose')
+  .checkSameSpeciesNeighbors()
+  .checkSoilConditions(5, 3)
+  .getResultingPlant();
+
+console.log(myPlant);
