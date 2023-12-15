@@ -437,7 +437,7 @@ Memory.saveState(cellData);
 // Finish game trying this again
 //aaaaaa
 
-// Example usage in main.ts
+// Example usage in main.ts for internal dsl
 const myPlant = new PlantDSL('Rose')
   .checkSameSpeciesNeighbors()
   .checkSoilConditions(5, 3)
