@@ -1,4 +1,4 @@
-// Internal DSL -----------------
+// Internal DSL ----------------
 
 // Defines the state of the soil
 interface SoilState {
