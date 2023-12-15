@@ -1,6 +1,6 @@
 import data from '../example.json' assert { type: 'json' };
 import {numTiles, cells, time} from './main.ts'
-
+//please work
 //consider deleting
 /*  export interface situation{
     winCond: number;

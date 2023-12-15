@@ -1,4 +1,4 @@
-import data from "../languages.json" assert { type: "json" };
+//Simport data from "../languages.json" assert { type: "json" };
 
 /* export function translate(langu: string) {
   if (langu == "AR") {
