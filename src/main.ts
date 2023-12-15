@@ -3,6 +3,7 @@ import { Plant, PlantType } from "./plants";
 import { Memento, SaveFile } from "./Memento";
 import { initGrid, saveGrid } from "./saveFunction";
 import { reader, generateEventLevels } from "./externalStuff";
+import { PlantDSL } from "./internalDSL";
 
 reader();
 
@@ -464,3 +465,11 @@ export let saveNum: number = 0;
 initGrid();
 // Call updateGridData initially to set initial levels
 updateGridData();
+
+// Example usage in main.ts
+const myPlant = new PlantDSL('Rose')
+  .checkSameSpeciesNeighbors()
+  .checkSoilConditions(5, 3)
+  .getResultingPlant();
+
+console.log(myPlant);

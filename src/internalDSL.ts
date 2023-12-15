@@ -1,6 +1,3 @@
-//import data from '../example.json' assert { type: 'json' };
-//import {plantTypes, cellData} from './main.ts'
-
 // Internal DSL -----------------
 
 // Defines the state of the soil
@@ -43,8 +40,9 @@ class PlantDSL {
   }
 
   // DSL function for checking neighbors of the same species
-  checkSameSpeciesNeighbors(): PlantDSL {
-    const logic = (context: GrowthContext) => {
+ checkSameSpeciesNeighbors(): PlantDSL {
+  const logic = (context: GrowthContext) => {
+    if (context && context.neighborCells) {
       const sameSpeciesNeighbors = context.neighborCells.filter(
         (neighbor) => neighbor.plant?.type === this.plant.type
       );
@@ -52,17 +50,19 @@ class PlantDSL {
       // Logic implementaion for same species neighbors
       // This update plant level based on the number of same species neighbors
       this.plant.level += sameSpeciesNeighbors.length;
-    };
+    }
+  };
 
-    logic({} as GrowthContext); // Execute the logic immediately
+  logic({} as GrowthContext); // Execute the logic immediately
 
-    return this;
-  }
+  return this;
+}
 
   // DSL function for checking soil conditions (sun and water level)
   checkSoilConditions(minSunLevel: number, minWaterLevel: number): PlantDSL {
     const logic = (context: GrowthContext) => {
-      const { SunLevel, WaterLevel } = context.cell.soilState;
+      if (context && context.cell) {
+        const { SunLevel, WaterLevel } = context.cell.soilState;
 
       if (SunLevel >= minSunLevel && WaterLevel >= minWaterLevel) {
         // Logic implementaion for meeting soil conditions
@@ -71,12 +71,13 @@ class PlantDSL {
       } else {
         this.plant.isAlive = false;
       }
-    };
+    }
+  };
 
-    logic({} as GrowthContext); // Execute the logic immediately
+  logic({} as GrowthContext); // Execute the logic immediately
 
-    return this;
-  }
+  return this;
+}
 
   // Get the resulting plant after applying growth conditions
   getResultingPlant(): Plant {
@@ -84,10 +85,4 @@ class PlantDSL {
   }
 }
 
-// Example usage of the DSL
-const myPlant = new PlantDSL('Rose')
-  .checkSameSpeciesNeighbors()
-  .checkSoilConditions(5, 3)
-  .getResultingPlant();
-
-console.log(myPlant);
+export {PlantDSL};

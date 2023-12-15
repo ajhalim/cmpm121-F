@@ -1,6 +1,59 @@
-/* styles.css */
+body {
+  margin: 0;
+  overflow: hidden;
+  background: url('background.png') no-repeat center center fixed;
+  background-size: cover;
+}
 
-/* Add styles for the canvas */
 canvas {
-  border: 5px solid #000;
+  position: absolute;
+  z-index: 1;
+}
+
+#gridCanvas {
+  top: 60px;
+  left: 60px;
+}
+
+#selectCanvas {
+  display: none;
+}
+
+#app {
+  position: absolute;
+  z-index: 2;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('overlay.png') no-repeat center center fixed;
+  background-size: cover;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#buttonContainer {
+  position: absolute;
+  top: 60px;
+  left: 572px;
+  display: flex;
+  flex-direction: row;
+  height: 300px;
+  width: 600px;
+  background: transparent; /* Make the container clear */
+}
+
+button {
+  width: 200px;
+  height: 80px;
+  margin-right: 10px;
+  z-index: 999;
+  position: absolute;
+  background: transparent; /* Make the button clear */
+  color: wheat; /* Set font color to white */
+  font-size: 30px; /* Adjust font size as needed */
 }
