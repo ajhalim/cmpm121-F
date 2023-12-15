@@ -239,13 +239,12 @@ function generateRandomLevels() {
 function updateGridData() {
     generateRandomLevels();
     generateEventLevels(test.event1Start, test.event1Sun, test.event1Water);
-  generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
-  generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
+    generateEventLevels(test.event2Start, test.event2Sun, test.event2Water);
+    generateEventLevels(test.event3Start, test.event3Sun, test.event3Water);
     printGridData();
     redrawTilemap();
     
     SaveGame.saveSlot(0, cells, cellData, tilemap, xyPos, time, harvestTotal, pastTile);
-    // AutoSave.saveAuto(cellData); // Save the updated state to the auto-save
     Memory.saveState(cellData); // Save the current state to the memory
     UndoRedo.saveMemoryState(); // Update undo/redo history
 }

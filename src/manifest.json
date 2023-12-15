@@ -1,0 +1,11 @@
+{
+    "name": "My PWA",
+    "icons": [
+      {
+        "src": "/player.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ]
+  }
+  
