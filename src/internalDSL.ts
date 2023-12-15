@@ -1,6 +1,3 @@
-//import data from '../example.json' assert { type: 'json' };
-//import {plantTypes, cellData} from './main.ts'
-
 // Internal DSL -----------------
 
 // Defines the state of the soil
@@ -87,15 +84,5 @@ class PlantDSL {
     return this.plant;
   }
 }
-
-// Example usage of the DSL
-/*
-const myPlant = new PlantDSL('Rose')
-  .checkSameSpeciesNeighbors()
-  .checkSoilConditions(5, 3)
-  .getResultingPlant();
-
-console.log(myPlant);
-*/
 
 export {PlantDSL};
