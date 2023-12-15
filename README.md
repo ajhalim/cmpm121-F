@@ -87,3 +87,22 @@ So far, Vite and TypeScript has been sufficient for implementing the F0 requirem
 
 ## Reflection
 * We shifted from the initial goals of making something pretty, elegant and generally pleasant and just went for something that could work and should in theory work with a few more man hours. This was also due to poor scheduling and unfortunate circumstances. 3/5ths of our team was unavailable for a good portion of this development cycle due to a different class having a major final req be due at the same time. So instead of making well thought out and well designed we just went with waht was easy to implement and got the general idea across. This log was hard to make and so were these reqs, not due to the actual ask of the reqs but due to external factors. Felt unsatisfying and unfortunate. Next deliverable will also be under crunch and probably will be submitted with a "works in the source files but not for the user(well at least not easily). Roles don't really exist anymore, due to everyone being busy with something or another and specialization not being something we can afford right now, so everyone just wears every hat the best they can wehn they can. Again, these reqs in their own should not have been too hard, but other matters made delivering on them particularly challenging.
+
+## How we satisfied the software requirements
+### F0+F1+F2
+* Minor changes here and there, fixing name conventions and fixing implementation where we can when we can. Had to fix some of the HTML element names to be more easily parsable and accessible for translation stuff.
+
+### Internationalization
+* Started with an script external to the main file that grabbed all the HTML attribtues from index.html but that had issues reading for some reason so hack solution was implemented of just having everything in main except the JSON file the translations were based on. In the end it worked. Did this by getting all the HTML attributes in these new functions in main(I know it's messy) then parsing the coressponding information we wrote in a JSON file then changing the internalhtml of these html buttons with the contents found in the JSON file.
+
+### Localization
+* Google translated for two other languages. One arabic and one chinese and put those translated terms into a json file and ascribed them to attributes in that json file. It's not fool proof and chances are the localization isn't perfect but if it's any consolation the initial outputs we were given we ran them into deepl and found no real issue with the translations. Language is selected by clicking the language button until they come across the language desired, it just cycles through the languages. We did this for ease of implementation and also to conform with our current UI layout. 
+
+### Mobile Installation
+* Don't believe we have this done. Tried to do this by hosting it on git actions pages but something broke. We got all the functionality in place but a few of our visual assets broke in the process, uncertain why 
+
+### Mobile Play (Offline)
+* Don't believe we have this done
+
+## Reflection
+* This was kind of a nightmare project. Poorly managed time, poorly managed roles, overlapping deadlines and a lot of things not actually regarding the course/assignment got in the way. We managed to make something kind of exist at the end but it's at best a prototype. We did learn about the wonders of going on crunch for this assigment. Also learned about the wonders of git and how to better control versions using it. If we did have some thing we would have done better it would be tigher time scheduling, getting everyone up to speed at least once a week so that even if they didn't meet the deadline they knew what was done and where it was done helping with team cohesion and understanding.
